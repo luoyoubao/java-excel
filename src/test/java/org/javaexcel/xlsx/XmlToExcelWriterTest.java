@@ -14,7 +14,7 @@ import org.junit.Test;
 
 /*
  * File name   : XmlToExcelWriterTest.java
- * @Copyright  : www.quancheng-ec.com
+ * @Copyright  : luoyoub@163.com
  * Description : javaexcel
  * Author      : Robert
  * CreateTime  : 2016年4月2日
@@ -44,7 +44,7 @@ public class XmlToExcelWriterTest {
         long begTime = System.currentTimeMillis();
         try {
             XmlToExcelWriter writer = new XmlToExcelWriter();
-            writer.process(metadata, datas, "/Users/Robert/Desktop/QA_test/expense.xlsx");
+            writer.process(metadata, datas, "/tmp/expense.xlsx");
         } catch (Exception e) {
             e.printStackTrace();
         }

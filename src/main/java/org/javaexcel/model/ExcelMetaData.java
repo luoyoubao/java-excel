@@ -4,7 +4,7 @@ import java.util.List;
 
 /*
  * File name   : ExeclInfo.java
- * @Copyright  : www.quancheng-ec.com
+ * @Copyright  : luoyoub@163.com
  * Description : execlservice-common
  * Author      : Robert
  * CreateTime  : 2016年3月14日

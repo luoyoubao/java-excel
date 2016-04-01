@@ -4,7 +4,7 @@ import org.apache.poi.hssf.util.CellReference;
 
 /*
  * File name   : MergeCell.java
- * @Copyright  : www.quancheng-ec.com
+ * @Copyright  : luoyoub@163.com
  * Description : excelservice-service
  * Author      : Robert
  * CreateTime  : 2016年4月1日

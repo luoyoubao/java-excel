@@ -2,10 +2,12 @@ package org.javaexcel.util;
 
 import com.google.gson.Gson;
 
-/**
- * @author cuikexiang
- *
- * @time 2015年10月30日 上午10:37:03
+/*
+ * File name   : JsonUtil.java
+ * @Copyright  : luoyoub@163.com
+ * Description : javaexcel
+ * Author      : Robert
+ * CreateTime  : 2016年4月2日
  */
 public final class JsonUtil {
     private static Gson gson = new Gson();

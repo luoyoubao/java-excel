@@ -2,7 +2,7 @@ package org.javaexcel.model;
 
 /*
  * File name   : CellStyle.java
- * @Copyright  : www.quancheng-ec.com
+ * @Copyright  : luoyoub@163.com
  * Description : javaexcel
  * Author      : Robert
  * CreateTime  : 2016年4月1日

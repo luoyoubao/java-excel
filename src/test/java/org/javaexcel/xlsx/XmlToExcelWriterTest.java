@@ -20,7 +20,7 @@ import org.junit.Test;
  * CreateTime  : 2016年4月2日
  */
 public class XmlToExcelWriterTest {
-    private static final int ROWS = 10;
+    private static final int ROWS = 1000;
     private ExcelMetaData metadata;
     private List<Map<String, Object>> datas;
 
@@ -52,6 +52,7 @@ public class XmlToExcelWriterTest {
         System.out.println("Total:" + (System.currentTimeMillis() - begTime) + "ms");
     }
 
+    @SuppressWarnings("unchecked")
     private void constructdata() {
         datas = new ArrayList<Map<String, Object>>();
         for (int i = 1; i <= ROWS; i++) {

@@ -125,7 +125,6 @@ public class XmlToExcelWriter {
         }
 
         for (Map<String, Object> data : allDatas) {
-            long btime = System.currentTimeMillis();
             int rowsize = getColumns(data);
             int maxRow = rownum + rowsize - 1;
             if (rowsize > 0) {
@@ -160,8 +159,6 @@ public class XmlToExcelWriter {
                 }
                 sw.endRow();
             }
-
-            System.out.println("parse one times:" + (System.currentTimeMillis() - btime) + "ms");
         }
     }
 

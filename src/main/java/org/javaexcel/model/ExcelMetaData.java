@@ -26,7 +26,7 @@ public class ExcelMetaData {
     private ExcelHeader header;
 
     // 是否有标题
-    private boolean hasTitle = false;
+    // private boolean hasTitle = false;
 
     // 是否有二级标题
     private boolean hasSubTitle = false;
@@ -73,14 +73,6 @@ public class ExcelMetaData {
 
     public void setSheetName(String sheetName) {
         this.sheetName = sheetName;
-    }
-
-    public boolean isHasTitle() {
-        return hasTitle;
-    }
-
-    public void setHasTitle(boolean hasTitle) {
-        this.hasTitle = hasTitle;
     }
 
     public boolean isHasHeader() {

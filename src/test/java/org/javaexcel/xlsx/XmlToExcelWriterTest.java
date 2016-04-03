@@ -20,7 +20,7 @@ import org.junit.Test;
  * CreateTime  : 2016年4月2日
  */
 public class XmlToExcelWriterTest {
-    private static final int ROWS = 1000;
+    private static final int ROWS = 10;
     private ExcelMetaData metadata;
     private List<Map<String, Object>> datas;
 
@@ -33,7 +33,6 @@ public class XmlToExcelWriterTest {
         metadata.setFileName("expense");
         metadata.setFileType("xlsx");
         metadata.setSheetName("expense");
-        metadata.setHasTitle(true);
         metadata.setHasSubTitle(true);
         structureMetaData();
         constructdata();
@@ -44,7 +43,7 @@ public class XmlToExcelWriterTest {
         long begTime = System.currentTimeMillis();
         try {
             XmlToExcelWriter writer = new XmlToExcelWriter();
-            writer.process(metadata, datas, "/tmp/expense.xlsx");
+            writer.process(metadata, datas, "/Users/Robert/Desktop/QA_test/expense.xlsx");
         } catch (Exception e) {
             e.printStackTrace();
         }

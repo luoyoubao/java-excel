@@ -35,12 +35,14 @@ import org.javaexcel.util.UUIDUtil;
  * CreateTime  : 2016年4月1日
  */
 public class XmlToExcelWriter {
+    private static final double DEFAULTROWHEIGHT = 16;
     private SpreadSheetWriter sw;
     private List<Map<String, Object>> allDatas;
     private ExcelMetaData metedata;
     private CellMerge cellMerge;
     private List<CellMerge> cellMerges = new ArrayList<CellMerge>();
     private int rownum = 0;
+    private int columnSize = 0;
 
     /**
      * 导出文件
@@ -50,6 +52,8 @@ public class XmlToExcelWriter {
     public void process(ExcelMetaData metedata, List<Map<String, Object>> datas, String fileName) throws Exception {
         this.metedata = metedata;
         this.allDatas = datas;
+
+        init();
 
         String tempFile = Files.createTempFile(UUIDUtil.getUUID(), Const.EXCEL_SUFFIX_XLSX).toString();
         String tmpXml = Files.createTempFile(metedata.getSheetName(), Const.XML_SUFFIX).toString();
@@ -78,6 +82,19 @@ public class XmlToExcelWriter {
         } finally {
             Files.delete(Paths.get(tempFile));
             Files.delete(Paths.get(tmpXml));
+        }
+    }
+
+    /**
+     * 
+     */
+    private void init() {
+        for (ExcelTitle excelTitle : metedata.getExcelTitle()) {
+            if (excelTitle.isHasSubTitle() && null != excelTitle.getSubTitles()) {
+                columnSize += excelTitle.getSubTitles().size();
+                continue;
+            }
+            columnSize++;
         }
     }
 
@@ -129,7 +146,8 @@ public class XmlToExcelWriter {
             int maxRow = rownum + rowsize - 1;
             if (rowsize > 0) {
                 for (int i = 0; i < rowsize; i++) {
-                    sw.insertRow(rownum);
+                    // sw.insertRow(rownum);
+                    sw.insertRowWithHeight(rownum, columnSize, DEFAULTROWHEIGHT);
                     for (ExcelTitle eh : this.metedata.getExcelTitle()) {
                         Object obj = data.get(eh.getName());
                         if (eh.isMerge()) {
@@ -153,7 +171,8 @@ public class XmlToExcelWriter {
                     sw.endRow();
                 }
             } else {
-                sw.insertRow(rownum++);
+                // sw.insertRow(rownum++);
+                sw.insertRowWithHeight(rownum++, columnSize, DEFAULTROWHEIGHT);
                 for (ExcelTitle eh : this.metedata.getExcelTitle()) {
                     sw.createCell(eh.getIndex(), data.get(eh.getName()).toString());
                 }
@@ -173,14 +192,15 @@ public class XmlToExcelWriter {
     }
 
     private void writeHeader() throws IOException {
-        if (!metedata.isHasTitle()) {
+        if (null == metedata.getExcelTitle() || metedata.getExcelTitle().isEmpty()) {
             return;
         }
 
         // 写EXCEL表头
         if (metedata.isHasSubTitle()) {
             for (int i = 0; i < 2; i++) {
-                sw.insertRow(rownum);
+                // sw.insertRow(rownum);
+                sw.insertRowWithHeight(rownum, columnSize, DEFAULTROWHEIGHT);
                 for (ExcelTitle excelTitle : metedata.getExcelTitle()) {
                     if (excelTitle.isMerge()) {
                         if (0 == i) {
@@ -210,7 +230,7 @@ public class XmlToExcelWriter {
                 rownum++;
             }
         } else {
-            sw.insertRow(rownum++);
+            sw.insertRowWithHeight(rownum++, columnSize, DEFAULTROWHEIGHT);
             for (ExcelTitle et : metedata.getExcelTitle()) {
                 sw.createCell(et.getIndex(), et.getDisplayName());
             }

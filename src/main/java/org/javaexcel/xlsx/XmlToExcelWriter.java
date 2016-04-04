@@ -117,6 +117,7 @@ public class XmlToExcelWriter {
         writeData();
 
         // 写备注
+        writeFooter();
 
         sw.endSheetData();
 
@@ -130,6 +131,21 @@ public class XmlToExcelWriter {
 
         // 电子表格结束
         sw.endSheet();
+    }
+
+    /**
+     * @throws IOException
+     * 
+     */
+    private void writeFooter() throws IOException {
+        if (this.metedata.isHasFooter()) {
+            sw.insertRowWithHeight(rownum, columnSize - 1, 25);
+            sw.createCell(0, metedata.getFooter().getRemarks());
+            sw.endRow();
+
+            cellMerge = new CellMerge(rownum, 0, rownum, columnSize - 1);
+            cellMerges.add(cellMerge);
+        }
     }
 
     /**

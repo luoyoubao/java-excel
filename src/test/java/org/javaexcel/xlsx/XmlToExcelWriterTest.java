@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.javaexcel.model.CellType;
+import org.javaexcel.model.ExcelFooter;
 import org.javaexcel.model.ExcelHeader;
 import org.javaexcel.model.ExcelMetaData;
 import org.javaexcel.model.ExcelTitle;
@@ -37,10 +38,15 @@ public class XmlToExcelWriterTest {
         metadata.setHasSubTitle(true);
 
         this.metadata.setHasHeader(true);
-
         ExcelHeader header = new ExcelHeader();
         header.setHeaderName("报销单");
         this.metadata.setHeader(header);
+
+        this.metadata.setHasFooter(true);
+        ExcelFooter footer = new ExcelFooter();
+        footer.setRemarks("说明:本文档版权所有,违法必究");
+        this.metadata.setFooter(footer);
+
         structureMetaData();
         constructdata();
     }

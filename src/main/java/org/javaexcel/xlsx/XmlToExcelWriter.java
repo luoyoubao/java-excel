@@ -108,6 +108,7 @@ public class XmlToExcelWriter {
         sw.beginSheetData();
 
         // 写大表头
+        writeBigTitle();
 
         // 写标题
         writeHeader();
@@ -129,6 +130,23 @@ public class XmlToExcelWriter {
 
         // 电子表格结束
         sw.endSheet();
+    }
+
+    /**
+     * @throws IOException
+     * 
+     */
+    private void writeBigTitle() throws IOException {
+        if (this.metedata.isHasHeader()) {
+            sw.insertRowWithHeight(rownum, columnSize - 1, 45);
+            sw.createCell(rownum, metedata.getHeader().getHeaderName());
+            sw.endRow();
+
+            cellMerge = new CellMerge(rownum, rownum, rownum, columnSize - 1);
+            cellMerges.add(cellMerge);
+
+            rownum++;
+        }
     }
 
     /**
@@ -204,7 +222,7 @@ public class XmlToExcelWriter {
                 for (ExcelTitle excelTitle : metedata.getExcelTitle()) {
                     if (excelTitle.isMerge()) {
                         if (0 == i) {
-                            cellMerge = new CellMerge(0, excelTitle.getIndex(), 1, excelTitle.getIndex());
+                            cellMerge = new CellMerge(rownum, excelTitle.getIndex(), rownum + 1, excelTitle.getIndex());
                             cellMerges.add(cellMerge);
                             sw.createCell(excelTitle.getIndex(), excelTitle.getDisplayName());
                         }

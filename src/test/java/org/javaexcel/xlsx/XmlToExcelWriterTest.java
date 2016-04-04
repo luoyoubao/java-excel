@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.javaexcel.model.CellType;
+import org.javaexcel.model.ExcelHeader;
 import org.javaexcel.model.ExcelMetaData;
 import org.javaexcel.model.ExcelTitle;
 import org.javaexcel.util.JsonUtil;
@@ -34,6 +35,12 @@ public class XmlToExcelWriterTest {
         metadata.setFileType("xlsx");
         metadata.setSheetName("expense");
         metadata.setHasSubTitle(true);
+
+        this.metadata.setHasHeader(true);
+
+        ExcelHeader header = new ExcelHeader();
+        header.setHeaderName("报销单");
+        this.metadata.setHeader(header);
         structureMetaData();
         constructdata();
     }
@@ -132,6 +139,7 @@ public class XmlToExcelWriterTest {
         t7.setName("costDetail");
         t7.setDisplayName("费用详情");
         t7.setDataType(CellType.LIST);
+        t7.setHasSubTitle(true);
         titles.add(t7);
 
         List<ExcelTitle> subTitles = new ArrayList<ExcelTitle>();

@@ -25,9 +25,6 @@ public class ExcelMetaData {
     // 大表头
     private ExcelHeader header;
 
-    // 是否有标题
-    // private boolean hasTitle = false;
-
     // 是否有二级标题
     private boolean hasSubTitle = false;
 

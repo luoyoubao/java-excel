@@ -1,6 +1,7 @@
 package org.javaexcel.util;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /*
  * File name   : JsonUtil.java
@@ -10,7 +11,7 @@ import com.google.gson.Gson;
  * CreateTime  : 2016年4月2日
  */
 public final class JsonUtil {
-    private static Gson gson = new Gson();
+    private static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 
     public static <T> T stringToBean(String json, Class<T> classOfT) {
         return gson.fromJson(json, classOfT);

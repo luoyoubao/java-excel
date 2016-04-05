@@ -16,13 +16,14 @@ public class ExcelTitle {
     // 列名
     private String name;
 
+    // 设置列宽
+    private double columnWidth;
+
     // 列标题
     private String displayName;
 
     // 列类型(number, double, date, money, text, percent)
     private CellType dataType;
-
-    private CellStyle cellStyle;
 
     // 列是否支持合并(行合并)
     private boolean isMerge = false;
@@ -30,8 +31,18 @@ public class ExcelTitle {
     // 是否有子标题(只支持一级子标题)
     private boolean hasSubTitle = false;
 
+    private ExcelCellStyle cellStyle;
+
     // 子标题列表
     private List<ExcelTitle> subTitles;
+
+    public ExcelCellStyle getCellStyle() {
+        return cellStyle;
+    }
+
+    public void setCellStyle(ExcelCellStyle cellStyle) {
+        this.cellStyle = cellStyle;
+    }
 
     public Integer getIndex() {
         return index;
@@ -39,6 +50,14 @@ public class ExcelTitle {
 
     public void setIndex(Integer index) {
         this.index = index;
+    }
+
+    public double getColumnWidth() {
+        return columnWidth;
+    }
+
+    public void setColumnWidth(double columnWidth) {
+        this.columnWidth = columnWidth;
     }
 
     public String getName() {
@@ -63,14 +82,6 @@ public class ExcelTitle {
 
     public void setDataType(CellType dataType) {
         this.dataType = dataType;
-    }
-
-    public CellStyle getCellStyle() {
-        return cellStyle;
-    }
-
-    public void setCellStyle(CellStyle cellStyle) {
-        this.cellStyle = cellStyle;
     }
 
     public boolean isMerge() {

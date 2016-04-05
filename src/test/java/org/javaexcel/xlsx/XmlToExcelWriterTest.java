@@ -5,7 +5,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.javaexcel.model.CellType;
+import org.javaexcel.model.ExcelCellStyle;
+import org.javaexcel.model.ExcelColor;
 import org.javaexcel.model.ExcelFooter;
 import org.javaexcel.model.ExcelHeader;
 import org.javaexcel.model.ExcelMetaData;
@@ -40,11 +44,23 @@ public class XmlToExcelWriterTest {
         this.metadata.setHasHeader(true);
         ExcelHeader header = new ExcelHeader();
         header.setHeaderName("报销单");
+        ExcelCellStyle hs = new ExcelCellStyle();
+        hs.setAlign(XSSFCellStyle.ALIGN_CENTER);
+        hs.setVerticalAlign(XSSFCellStyle.ALIGN_CENTER);
+        hs.setSize((short) 42);
+
+        hs.setColor(ExcelColor.RED);
+        header.setCellStyle(hs);
         this.metadata.setHeader(header);
 
         this.metadata.setHasFooter(true);
         ExcelFooter footer = new ExcelFooter();
         footer.setRemarks("说明:本文档版权所有,违法必究");
+
+        ExcelCellStyle footcs = new ExcelCellStyle();
+        footcs.setVerticalAlign(XSSFCellStyle.VERTICAL_CENTER);
+        footcs.setColor(ExcelColor.BLUE);
+        footer.setCellStyle(footcs);
         this.metadata.setFooter(footer);
 
         structureMetaData();
@@ -131,6 +147,11 @@ public class XmlToExcelWriterTest {
         t5.setDisplayName("审批提交日期");
         t5.setDataType(CellType.DATE);
         t5.setMerge(true);
+        t5.setColumnWidth(25);
+        ExcelCellStyle c5 = new ExcelCellStyle();
+        c5.setAlign(XSSFCellStyle.ALIGN_RIGHT);
+        c5.setVerticalAlign(XSSFCellStyle.VERTICAL_CENTER);
+        t5.setCellStyle(c5);
         titles.add(t5);
 
         ExcelTitle t6 = new ExcelTitle();
@@ -186,6 +207,11 @@ public class XmlToExcelWriterTest {
         t12.setDisplayName("报销金额");
         t12.setDataType(CellType.MONEY);
         t12.setMerge(true);
+        ExcelCellStyle c12 = new ExcelCellStyle();
+        c12.setAlign(XSSFCellStyle.ALIGN_RIGHT);
+        c12.setSize((short) 14);
+        c12.setColor(XSSFFont.COLOR_RED);
+        t12.setCellStyle(c12);
         titles.add(t12);
 
         ExcelTitle t13 = new ExcelTitle();
@@ -195,6 +221,9 @@ public class XmlToExcelWriterTest {
         t13.setDataType(CellType.MONEY);
         t13.setMerge(true);
         titles.add(t13);
+        ExcelCellStyle c13 = new ExcelCellStyle();
+        c13.setAlign(XSSFCellStyle.ALIGN_RIGHT);
+        t13.setCellStyle(c13);
 
         metadata.setExcelTitle(titles);
     }

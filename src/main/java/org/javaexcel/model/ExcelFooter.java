@@ -12,7 +12,7 @@ public class ExcelFooter {
     private String remarks;
 
     // 样式
-    private CellStyle cellStyle;
+    private ExcelCellStyle cellStyle;
 
     public String getRemarks() {
         return remarks;
@@ -22,11 +22,11 @@ public class ExcelFooter {
         this.remarks = remarks;
     }
 
-    public CellStyle getCellStyle() {
+    public ExcelCellStyle getCellStyle() {
         return cellStyle;
     }
 
-    public void setCellStyle(CellStyle cellStyle) {
+    public void setCellStyle(ExcelCellStyle cellStyle) {
         this.cellStyle = cellStyle;
     }
 }

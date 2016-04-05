@@ -12,7 +12,7 @@ public class ExcelHeader {
     private String headerName;
 
     // 样式
-    private CellStyle cellStyle;
+    private ExcelCellStyle cellStyle;
 
     public String getHeaderName() {
         return headerName;
@@ -22,11 +22,11 @@ public class ExcelHeader {
         this.headerName = headerName;
     }
 
-    public CellStyle getCellStyle() {
+    public ExcelCellStyle getCellStyle() {
         return cellStyle;
     }
 
-    public void setCellStyle(CellStyle cellStyle) {
+    public void setCellStyle(ExcelCellStyle cellStyle) {
         this.cellStyle = cellStyle;
     }
 }

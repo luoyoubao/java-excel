@@ -28,7 +28,7 @@ import org.junit.Test;
 public class XmlToExcelWriterTest {
     private static final int ROWS = 10;
     private ExcelMetaData metadata;
-    private List<Map<String, Object>> datas;
+    private List<Object> datas;
 
     /**
      * @throws java.lang.Exception
@@ -82,7 +82,7 @@ public class XmlToExcelWriterTest {
 
     @SuppressWarnings("unchecked")
     private void constructdata() {
-        datas = new ArrayList<Map<String, Object>>();
+        datas = new ArrayList<Object>();
         for (int i = 1; i <= ROWS; i++) {
             Expense e = new Expense("报销单" + i, "采购费用" + i, "Tim", "产品部", new Date(), "审批中", 880000 + i, 3200 + i);
             List<CostDetail> detail = new ArrayList<CostDetail>();

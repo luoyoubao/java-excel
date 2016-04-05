@@ -1,5 +1,7 @@
 package org.javaexcel.util;
 
+import java.util.Map;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -19,5 +21,13 @@ public final class JsonUtil {
 
     public static String beanToString(Object object) {
         return gson.toJson(object);
+    }
+
+    public static void main(String[] args) {
+        Object obj = new Object();
+        String s = beanToString(obj);
+        System.out.println(s);
+        Map map = JsonUtil.stringToBean(s, Map.class);
+        System.out.println(map);
     }
 }

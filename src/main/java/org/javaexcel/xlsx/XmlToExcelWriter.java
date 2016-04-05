@@ -31,6 +31,7 @@ import org.javaexcel.model.ExcelHeader;
 import org.javaexcel.model.ExcelMetaData;
 import org.javaexcel.model.ExcelTitle;
 import org.javaexcel.util.Const;
+import org.javaexcel.util.JsonUtil;
 import org.javaexcel.util.UUIDUtil;
 
 /*
@@ -46,7 +47,7 @@ public class XmlToExcelWriter {
     private Workbook wb;
     private XSSFSheet sheet;
     private SpreadSheetWriter sw;
-    private List<Map<String, Object>> allDatas;
+    private List<Object> allDatas;
     private ExcelMetaData metedata;
     private CellMerge cellMerge;
     private List<CellMerge> cellMerges = new ArrayList<CellMerge>();
@@ -63,12 +64,15 @@ public class XmlToExcelWriter {
      * 
      * @throws Exception
      */
-    public void process(ExcelMetaData metedata, List<Map<String, Object>> datas, String fileName) throws Exception {
+    public void process(ExcelMetaData metedata, List<Object> datas, String fileName) throws Exception {
         this.metedata = metedata;
         this.allDatas = datas;
 
         String tempFile = Files.createTempFile(UUIDUtil.getUUID(), Const.EXCEL_SUFFIX_XLSX).toString();
         String tmpXml = Files.createTempFile(metedata.getSheetName(), Const.XML_SUFFIX).toString();
+
+        // 校验fileName的父目录是否存在
+
         try (OutputStream os = new FileOutputStream(fileName)) {
             // 建立工作簿和电子表格对象
             wb = new XSSFWorkbook();
@@ -302,14 +306,19 @@ public class XmlToExcelWriter {
             return;
         }
 
-        for (Map<String, Object> data : allDatas) {
-            int rowsize = getColumns(data);
+        for (Object object : allDatas) {
+            Map<String, Object> dataMap = JsonUtil.stringToBean(JsonUtil.beanToString(object), Map.class);
+            if (null == dataMap || dataMap.isEmpty()) {
+                continue;
+            }
+
+            int rowsize = getColumns(dataMap);
             int maxRow = rownum + rowsize - 1;
             if (rowsize > 0) {
                 for (int i = 0; i < rowsize; i++) {
                     sw.insertRowWithHeight(rownum, columnSize, DEFAULTROWHEIGHT);
                     for (ExcelTitle eh : this.metedata.getExcelTitle()) {
-                        Object obj = data.get(eh.getName());
+                        Object obj = dataMap.get(eh.getName());
                         xssfCellStyle = this.stylesMap.get("cellstyle_" + eh.getIndex());
                         if (eh.isMerge()) {
                             if (0 == i) {
@@ -334,7 +343,7 @@ public class XmlToExcelWriter {
                 sw.insertRowWithHeight(rownum++, columnSize, DEFAULTROWHEIGHT);
                 for (ExcelTitle eh : this.allTitles) {
                     xssfCellStyle = this.stylesMap.get("cellstyle_" + eh.getIndex());
-                    sw.createCell(eh.getIndex(), data.get(eh.getName()).toString(), xssfCellStyle.getIndex());
+                    sw.createCell(eh.getIndex(), dataMap.get(eh.getName()).toString(), xssfCellStyle.getIndex());
                 }
                 sw.endRow();
             }
@@ -342,8 +351,8 @@ public class XmlToExcelWriter {
     }
 
     @SuppressWarnings("rawtypes")
-    private static int getColumns(Map<String, Object> data) {
-        for (Object obj : data.values()) {
+    private static int getColumns(Map<String, Object> dataMap) {
+        for (Object obj : dataMap.values()) {
             if (obj instanceof List) {
                 return ((List) obj).size();
             }

@@ -2,10 +2,8 @@ package org.javaexcel.xlsx;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Calendar;
 
 import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.javaexcel.model.CellMerge;
 
 /*
@@ -194,9 +192,9 @@ public class SpreadSheetWriter {
      * @param columnIndex
      * @throws IOException
      */
-    public void createCell(int columnIndex) throws IOException {
+    public void createCell(int columnIndex, int styleIndex) throws IOException {
         String ref = new CellReference(_rownum, columnIndex).formatAsString();
-        _out.write("<c r=\"" + ref + "\" s=\"1\" />");
+        _out.write("<c r=\"" + ref + "\" s=\"" + styleIndex + "\" />");
     }
 
     public void createCell(int columnIndex, double value, int styleIndex)
@@ -209,17 +207,6 @@ public class SpreadSheetWriter {
         _out.write(">");
         _out.write("<v>" + value + "</v>");
         _out.write("</c>");
-    }
-
-    public void createCell(int columnIndex, double value)
-            throws IOException {
-        createCell(columnIndex, value, -1);
-    }
-
-    public void createCell(int columnIndex, Calendar value, int styleIndex)
-            throws IOException {
-        createCell(columnIndex, DateUtil.getExcelDate(value, false),
-                styleIndex);
     }
 
     /**

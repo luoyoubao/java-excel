@@ -22,14 +22,10 @@ public class ExcelTitle {
     // 列标题
     private String displayName;
 
-    // 列类型(number, double, date, money, text, percent)
     private CellType dataType;
 
     // 列是否支持合并(行合并)
     private boolean isMerge = false;
-
-    // 是否有子标题(只支持一级子标题)
-    private boolean hasSubTitle = false;
 
     private ExcelCellStyle cellStyle;
 
@@ -90,14 +86,6 @@ public class ExcelTitle {
 
     public void setMerge(boolean isMerge) {
         this.isMerge = isMerge;
-    }
-
-    public boolean isHasSubTitle() {
-        return hasSubTitle;
-    }
-
-    public void setHasSubTitle(boolean hasSubTitle) {
-        this.hasSubTitle = hasSubTitle;
     }
 
     public List<ExcelTitle> getSubTitles() {

@@ -19,16 +19,32 @@ import org.junit.Before;
 import org.junit.Test;
 
 /*
+ * 报表数据导出(需要合并单元格)
  * File name   : XmlToExcelWriterTest.java
  * @Copyright  : luoyoub@163.com
  * Description : javaexcel
  * Author      : Robert
  * CreateTime  : 2016年4月2日
  */
-public class XmlToExcelWriterTest {
+public class ComplexDataExportTest {
     private static final int ROWS = 10;
     private ExcelMetaData metadata;
     private List<Object> datas;
+
+    @Test
+    public void test() {
+        long begTime = System.currentTimeMillis();
+        try {
+            XmlToExcelWriter writer = new XmlToExcelWriter();
+            // writer.process(metadata, datas,
+            // "/Users/Robert/Desktop/QA_test/expense.xlsx");
+            writer.process(metadata, datas, "/Users/Robert/Desktop/QA_test/expense.xlsx");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Total:" + (System.currentTimeMillis() - begTime) + "ms");
+    }
 
     /**
      * @throws java.lang.Exception
@@ -41,6 +57,7 @@ public class XmlToExcelWriterTest {
         metadata.setSheetName("expense");
         metadata.setHasSubTitle(true);
 
+        // 设置大表头
         this.metadata.setHasHeader(true);
         ExcelHeader header = new ExcelHeader();
         header.setHeaderName("报销单");
@@ -48,7 +65,6 @@ public class XmlToExcelWriterTest {
         hs.setAlign(XSSFCellStyle.ALIGN_CENTER);
         hs.setVerticalAlign(XSSFCellStyle.ALIGN_CENTER);
         hs.setSize((short) 42);
-
         hs.setColor(ExcelColor.RED);
         header.setCellStyle(hs);
         this.metadata.setHeader(header);
@@ -56,28 +72,15 @@ public class XmlToExcelWriterTest {
         this.metadata.setHasFooter(true);
         ExcelFooter footer = new ExcelFooter();
         footer.setRemarks("说明:本文档版权所有,违法必究");
-
         ExcelCellStyle footcs = new ExcelCellStyle();
         footcs.setVerticalAlign(XSSFCellStyle.VERTICAL_CENTER);
         footcs.setColor(ExcelColor.BLUE);
+        footcs.setItalic(true);
         footer.setCellStyle(footcs);
         this.metadata.setFooter(footer);
 
         structureMetaData();
         constructdata();
-    }
-
-    @Test
-    public void test() {
-        long begTime = System.currentTimeMillis();
-        try {
-            XmlToExcelWriter writer = new XmlToExcelWriter();
-            writer.process(metadata, datas, "/Users/Robert/Desktop/QA_test/expense.xlsx");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("Total:" + (System.currentTimeMillis() - begTime) + "ms");
     }
 
     @SuppressWarnings("unchecked")
@@ -166,7 +169,6 @@ public class XmlToExcelWriterTest {
         t7.setName("costDetail");
         t7.setDisplayName("费用详情");
         t7.setDataType(CellType.LIST);
-        t7.setHasSubTitle(true);
         titles.add(t7);
 
         List<ExcelTitle> subTitles = new ArrayList<ExcelTitle>();

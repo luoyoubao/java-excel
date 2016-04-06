@@ -5,7 +5,7 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 
 /*
  * File name   : ExcelColor.java
- * @Copyright  : www.quancheng-ec.com
+ * @Copyright  : luoyoub@163.com
  * Description : javaexcel
  * Author      : Robert
  * CreateTime  : 2016年4月5日

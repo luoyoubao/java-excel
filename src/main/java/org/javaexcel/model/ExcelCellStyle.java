@@ -23,6 +23,20 @@ public class ExcelCellStyle {
     // 字体颜色
     private short color = ExcelColor.DEFAULT_COLOR;
 
+    // 单元格背景色
+    private short backgroundColor = ExcelColor.GREY_25_PERCENT;
+
+    // 斜体
+    private boolean isItalic = false;
+
+    public boolean isItalic() {
+        return isItalic;
+    }
+
+    public void setItalic(boolean isItalic) {
+        this.isItalic = isItalic;
+    }
+
     public short getSize() {
         return size;
     }
@@ -53,5 +67,13 @@ public class ExcelCellStyle {
 
     public void setColor(short color) {
         this.color = color;
+    }
+
+    public short getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(short backgroundColor) {
+        this.backgroundColor = backgroundColor;
     }
 }

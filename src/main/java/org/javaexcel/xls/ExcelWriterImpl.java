@@ -115,13 +115,11 @@ public class ExcelWriterImpl extends ExcelWriter {
         }
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void writeData() {
         allDatas.stream().forEach(data -> {
             Map<String, Object> dataMap = JsonUtil.stringToBean(JsonUtil.beanToString(data), Map.class);
-
-            long btime = System.currentTimeMillis();
             int rowsize = getColumns(dataMap);
-
             int maxRow = rownum + rowsize - 1;
             if (rowsize > 0) {
                 // 需要处理行的数据合并
@@ -135,13 +133,6 @@ public class ExcelWriterImpl extends ExcelWriter {
                     cell = row.createCell(eh.getIndex());
                     cell.setCellValue(dataMap.get(eh.getName()) + "");
                 });
-
-                // for (ExeclTitle eh : allheaders) {
-                // cell = row.createCell(eh.getIndex());
-                // String type = eh.getType().toLowerCase();
-                // Object value = data.get(eh.getName());
-                // setData(cell, value, type);
-                // }
 
                 for (int i = 0; i < rowsize; i++) {
                     for (ExcelTitle eh : bigheaders) {
@@ -166,8 +157,6 @@ public class ExcelWriterImpl extends ExcelWriter {
                 // row.setHeight((short) 0x249);
                 createCell(row, dataMap);
             }
-
-            System.out.println("parse one times:" + (System.currentTimeMillis() - btime) + "ms");
         });
     }
 
@@ -179,6 +168,7 @@ public class ExcelWriterImpl extends ExcelWriter {
         });
     }
 
+    @SuppressWarnings("rawtypes")
     private static int getColumns(Map<String, Object> dataMap) {
         for (Object obj : dataMap.values()) {
             if (obj instanceof List) {

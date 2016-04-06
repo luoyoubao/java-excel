@@ -18,7 +18,7 @@ import org.javaexcel.util.JsonUtil;
 
 /*
  * File name   : ExcelWriterImpl.java
- * @Copyright  : www.quancheng-ec.com
+ * @Copyright  : luoyoub@163.com
  * Description : javaexcel
  * Author      : Robert
  * CreateTime  : 2016年4月6日

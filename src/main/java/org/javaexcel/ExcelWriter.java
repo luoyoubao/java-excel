@@ -20,5 +20,5 @@ public abstract class ExcelWriter {
      * @param filePath
      * @return
      */
-    public abstract boolean write(ExcelMetaData metadata, List<Object> datas, String filePath);
+    public abstract boolean process(ExcelMetaData metedata, List<Object> datas, String fileName) throws Exception;
 }

@@ -5,115 +5,41 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.javaexcel.model.CellType;
-import org.javaexcel.model.ExcelCellStyle;
-import org.javaexcel.model.ExcelColor;
-import org.javaexcel.model.ExcelFooter;
-import org.javaexcel.model.ExcelHeader;
 import org.javaexcel.model.ExcelMetaData;
 import org.javaexcel.model.ExcelTitle;
 import org.javaexcel.util.JsonUtil;
+import org.javaexcel.xls.ExcelWriterImpl;
 import org.junit.Before;
 import org.junit.Test;
 
 /*
- * 报表数据导出(需要合并单元格)
- * File name   : XmlToExcelWriterTest.java
- * @Copyright  : luoyoub@163.com
- * Description : javaexcel
+ * File name   : ComplexExcelExport.java
+ * @Copyright  : www.quancheng-ec.com
+ * Description : excelservice-service
  * Author      : Robert
- * CreateTime  : 2016年4月2日
+ * CreateTime  : 2016年3月28日
  */
-public class ComplexDataExportTest {
-    private static final int ROWS = 10;
+public class ComplexExcelExportTest {
+    private static final int ROWS = 100;
     private ExcelMetaData metadata;
     private List<Object> datas;
-
-    @Test
-    public void test() {
-        long begTime = System.currentTimeMillis();
-        try {
-            XmlToExcelWriter writer = new XmlToExcelWriter();
-            // writer.process(metadata, datas,
-            // "/Users/Robert/Desktop/QA_test/expense.xlsx");
-            writer.process(metadata, datas, "/Users/Robert/Desktop/QA_test/expense.xlsx");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("Total:" + (System.currentTimeMillis() - begTime) + "ms");
-    }
 
     /**
      * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
+        int rownum = 0;
         metadata = new ExcelMetaData();
-        metadata.setFileName("expense");
-        metadata.setFileType("xlsx");
-        metadata.setSheetName("expense");
-        metadata.setHasSubTitle(true);
+        metadata.setFileName("test");
+        metadata.setFileType("xls");
+        metadata.setSheetName("test data");
 
-        // 设置大表头
-        this.metadata.setHasHeader(true);
-        ExcelHeader header = new ExcelHeader();
-        header.setHeaderName("报销单");
-        ExcelCellStyle hs = new ExcelCellStyle();
-        hs.setAlign(XSSFCellStyle.ALIGN_CENTER);
-        hs.setVerticalAlign(XSSFCellStyle.ALIGN_CENTER);
-        hs.setSize((short) 42);
-        hs.setColor(ExcelColor.RED);
-        header.setCellStyle(hs);
-        this.metadata.setHeader(header);
-
-        this.metadata.setHasFooter(true);
-        ExcelFooter footer = new ExcelFooter();
-        footer.setRemarks("说明:本文档版权所有,违法必究");
-        ExcelCellStyle footcs = new ExcelCellStyle();
-        footcs.setVerticalAlign(XSSFCellStyle.VERTICAL_CENTER);
-        footcs.setColor(ExcelColor.BLUE);
-        footcs.setItalic(true);
-        footer.setCellStyle(footcs);
-        this.metadata.setFooter(footer);
-
-        structureMetaData();
-        constructdata();
-    }
-
-    @SuppressWarnings("unchecked")
-    private void constructdata() {
-        datas = new ArrayList<Object>();
-        for (int i = 1; i <= ROWS; i++) {
-            Expense e = new Expense("报销单" + i, "采购费用" + i, "Tim", "产品部", new Date(), "审批中", 880000 + i, 3200 + i);
-            List<CostDetail> detail = new ArrayList<CostDetail>();
-            CostDetail c1 = new CostDetail("酒店", new Date(), "培训酒店住宿", 3000 + i);
-            detail.add(c1);
-            CostDetail c2 = new CostDetail("酒店", new Date(), "培训酒店住宿", 32000 + i);
-            detail.add(c2);
-            CostDetail c3 = new CostDetail("酒店", new Date(), "培训酒店住宿", 35000 + i);
-            detail.add(c3);
-            CostDetail c4 = new CostDetail("酒店", new Date(), "培训酒店住宿", 8000 + i);
-            detail.add(c4);
-            CostDetail c5 = new CostDetail("餐费", new Date(), "培训午餐费", 800 + i);
-            detail.add(c5);
-            e.setCostDetail(detail);
-            String es = JsonUtil.beanToString(e);
-            Map<String, Object> em = JsonUtil.stringToBean(es, Map.class);
-            datas.add(em);
-        }
-    }
-
-    /**
-     * 
-     */
-    private void structureMetaData() {
         // 设置表头
         List<ExcelTitle> titles = new ArrayList<ExcelTitle>();
         ExcelTitle t1 = new ExcelTitle();
-        t1.setIndex(0);
+        t1.setIndex(rownum++);
         t1.setName("billType");
         t1.setDisplayName("单据类型");
         t1.setDataType(CellType.TEXT);
@@ -121,7 +47,7 @@ public class ComplexDataExportTest {
         titles.add(t1);
 
         ExcelTitle t2 = new ExcelTitle();
-        t2.setIndex(1);
+        t2.setIndex(rownum++);
         t2.setName("billName");
         t2.setDisplayName("单据名称");
         t2.setDataType(CellType.TEXT);
@@ -129,7 +55,7 @@ public class ComplexDataExportTest {
         titles.add(t2);
 
         ExcelTitle t3 = new ExcelTitle();
-        t3.setIndex(2);
+        t3.setIndex(rownum++);
         t3.setName("createUserId");
         t3.setDisplayName("提交人");
         t3.setDataType(CellType.TEXT);
@@ -150,11 +76,6 @@ public class ComplexDataExportTest {
         t5.setDisplayName("审批提交日期");
         t5.setDataType(CellType.DATE);
         t5.setMerge(true);
-        t5.setColumnWidth(25);
-        ExcelCellStyle c5 = new ExcelCellStyle();
-        c5.setAlign(XSSFCellStyle.ALIGN_RIGHT);
-        c5.setVerticalAlign(XSSFCellStyle.VERTICAL_CENTER);
-        t5.setCellStyle(c5);
         titles.add(t5);
 
         ExcelTitle t6 = new ExcelTitle();
@@ -209,11 +130,6 @@ public class ComplexDataExportTest {
         t12.setDisplayName("报销金额");
         t12.setDataType(CellType.MONEY);
         t12.setMerge(true);
-        ExcelCellStyle c12 = new ExcelCellStyle();
-        c12.setAlign(XSSFCellStyle.ALIGN_RIGHT);
-        c12.setSize((short) 14);
-        c12.setColor(XSSFFont.COLOR_RED);
-        t12.setCellStyle(c12);
         titles.add(t12);
 
         ExcelTitle t13 = new ExcelTitle();
@@ -223,11 +139,53 @@ public class ComplexDataExportTest {
         t13.setDataType(CellType.MONEY);
         t13.setMerge(true);
         titles.add(t13);
-        ExcelCellStyle c13 = new ExcelCellStyle();
-        c13.setAlign(XSSFCellStyle.ALIGN_RIGHT);
-        t13.setCellStyle(c13);
 
-        metadata.setExcelTitle(titles);
+        this.metadata.setExcelTitle(titles);
+
+        long btime = System.currentTimeMillis();
+        constructdata();
+        System.out.println("init data:" + (System.currentTimeMillis() - btime) + "ms");
+        // System.out.println(JsonUtil.beanToString(req));
+    }
+
+    /**
+     * 
+     */
+    @SuppressWarnings("unchecked")
+    private void constructdata() {
+        this.datas = new ArrayList<Object>();
+        for (int i = 1; i <= ROWS; i++) {
+            Expense e = new Expense("报销单" + i, "采购费用" + i, "Tim", "产品部", new Date(), "审批中", 880000 + i, 3200 + i);
+            List<CostDetail> detail = new ArrayList<CostDetail>();
+            CostDetail c1 = new CostDetail("酒店", new Date(), "培训酒店住宿", 3000 + i);
+            detail.add(c1);
+            CostDetail c2 = new CostDetail("酒店", new Date(), "培训酒店住宿", 32000 + i);
+            detail.add(c2);
+            CostDetail c3 = new CostDetail("酒店", new Date(), "培训酒店住宿", 35000 + i);
+            detail.add(c3);
+            CostDetail c4 = new CostDetail("酒店", new Date(), "培训酒店住宿", 8000 + i);
+            detail.add(c4);
+            CostDetail c5 = new CostDetail("餐费", new Date(), "培训午餐费", 800 + i);
+            detail.add(c5);
+            e.setCostDetail(detail);
+            String es = JsonUtil.beanToString(e);
+            Map<String, Object> em = JsonUtil.stringToBean(es, Map.class);
+            datas.add(em);
+        }
+    }
+
+    @Test
+    public void test() {
+        try {
+            long begTime = System.currentTimeMillis();
+            boolean result = new ExcelWriterImpl().process(this.metadata, this.datas,
+                    "/Users/Robert/Desktop/QA_test/expense.xls");
+
+            System.out.println("Total:" + (System.currentTimeMillis() - begTime) + "ms");
+            System.out.println("running>>>" + result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     class Expense {

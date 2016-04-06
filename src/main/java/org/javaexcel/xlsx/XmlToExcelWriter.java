@@ -26,6 +26,7 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.javaexcel.ExcelWriter;
 import org.javaexcel.model.CellMerge;
 import org.javaexcel.model.ExcelCellStyle;
 import org.javaexcel.model.ExcelFooter;
@@ -44,7 +45,7 @@ import org.javaexcel.util.UUIDUtil;
  * Author      : Robert
  * CreateTime  : 2016年4月1日
  */
-public class XmlToExcelWriter {
+public class XmlToExcelWriter extends ExcelWriter {
     private static final double DEFAULTROWHEIGHT = 16;
     private Workbook wb;
     private XSSFSheet sheet;
@@ -66,9 +67,11 @@ public class XmlToExcelWriter {
      * 
      * @throws Exception
      */
-    public void process(ExcelMetaData metedata, List<Object> datas, String fileName) throws Exception {
+    public boolean process(ExcelMetaData metedata, List<Object> datas, String fileName) throws Exception {
         this.metedata = metedata;
         this.allDatas = datas;
+
+        boolean result = false;
 
         String tempFile = Files.createTempFile(UUIDUtil.getUUID(), Const.EXCEL_SUFFIX_XLSX).toString();
         String tmpXml = Files.createTempFile(metedata.getSheetName(), Const.XML_SUFFIX).toString();
@@ -105,12 +108,15 @@ public class XmlToExcelWriter {
             wr.close();
 
             substitute(tempFile, tmpXml, sheetRef.substring(1), os);
+            result = true;
         } catch (Exception e) {
-            throw new Exception(e);
+            throw e;
         } finally {
             Files.delete(Paths.get(tempFile));
             Files.delete(Paths.get(tmpXml));
         }
+
+        return result;
     }
 
     private void setBorder() {

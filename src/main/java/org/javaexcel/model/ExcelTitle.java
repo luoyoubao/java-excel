@@ -1,5 +1,6 @@
 package org.javaexcel.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -30,7 +31,18 @@ public class ExcelTitle {
     private ExcelCellStyle cellStyle;
 
     // 子标题列表
-    private List<ExcelTitle> subTitles;
+    private List<ExcelTitle> subTitles = new ArrayList<ExcelTitle>();
+
+    // 当单元格为空时填充字符
+    private String fillChar = "";
+
+    public String getFillChar() {
+        return fillChar;
+    }
+
+    public void setFillChar(String fillChar) {
+        this.fillChar = fillChar;
+    }
 
     public ExcelCellStyle getCellStyle() {
         return cellStyle;

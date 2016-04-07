@@ -25,7 +25,6 @@ public class ExcelMetaData {
     // 大表头
     private ExcelHeader header;
 
-    // 是否有二级标题
     private boolean hasSubTitle = false;
 
     // 列标题
@@ -36,17 +35,6 @@ public class ExcelMetaData {
 
     // 备注
     private ExcelFooter footer;
-
-    // 当单元格为空时填充字符
-    private String fillChar = "";
-
-    public boolean isHasSubTitle() {
-        return hasSubTitle;
-    }
-
-    public void setHasSubTitle(boolean hasSubTitle) {
-        this.hasSubTitle = hasSubTitle;
-    }
 
     public String getFileType() {
         return fileType;
@@ -62,6 +50,14 @@ public class ExcelMetaData {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public boolean isHasSubTitle() {
+        return hasSubTitle;
+    }
+
+    public void setHasSubTitle(boolean hasSubTitle) {
+        this.hasSubTitle = hasSubTitle;
     }
 
     public String getSheetName() {
@@ -110,13 +106,5 @@ public class ExcelMetaData {
 
     public void setFooter(ExcelFooter footer) {
         this.footer = footer;
-    }
-
-    public String getFillChar() {
-        return fillChar;
-    }
-
-    public void setFillChar(String fillChar) {
-        this.fillChar = fillChar;
     }
 }

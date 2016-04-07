@@ -20,4 +20,8 @@ public final class JsonUtil {
     public static String beanToString(Object object) {
         return gson.toJson(object);
     }
+
+    public static boolean isEmpty(Object obj) {
+        return null == obj || "".equals(obj) || 0 == obj.toString().length() ? true : false;
+    }
 }

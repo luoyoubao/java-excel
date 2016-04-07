@@ -11,13 +11,9 @@ import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.javaexcel.ExcelWriter;
-import org.javaexcel.model.ExcelCellStyle;
-import org.javaexcel.model.ExcelFooter;
-import org.javaexcel.model.ExcelHeader;
 import org.javaexcel.model.ExcelMetaData;
 import org.javaexcel.model.ExcelTitle;
 import org.javaexcel.util.JsonUtil;
@@ -30,7 +26,6 @@ import org.javaexcel.util.JsonUtil;
  * CreateTime  : 2016年4月6日
  */
 public class DataToExcelWriter extends ExcelWriter {
-    private List<ExcelTitle> allTitles = new ArrayList<ExcelTitle>();
     private List<ExcelTitle> bigheaders = new ArrayList<ExcelTitle>();
     private ExcelMetaData metedata;
     private List<Object> allDatas;
@@ -71,86 +66,13 @@ public class DataToExcelWriter extends ExcelWriter {
         return result;
     }
 
-    private void initStyle() {
-        ExcelHeader header = metedata.getHeader();
-        if (metedata.isHasHeader() && null != header) {
-            cellStyle = wb.createCellStyle();
-            ExcelCellStyle hsy = header.getCellStyle();
-            if (null != hsy) {
-                cellStyle.setAlignment(hsy.getAlign());
-                cellStyle.setVerticalAlignment(hsy.getVerticalAlign());
-
-                font = (Font) wb.createFont();
-                font.setFontHeightInPoints((short) hsy.getSize());
-                font.setColor((short) hsy.getColor());
-                cellStyle.setFont(font);
-                cellStyle.setFillForegroundColor(hsy.getBackgroundColor());
-                cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-            }
-            setBorder();
-            this.stylesMap.put("headerStyle", cellStyle);
-        }
-
-        ExcelFooter footer = metedata.getFooter();
-        if (metedata.isHasFooter() && null != footer) {
-            cellStyle = wb.createCellStyle();
-            ExcelCellStyle fstyle = footer.getCellStyle();
-            if (null != fstyle) {
-                cellStyle.setAlignment(fstyle.getAlign());
-                cellStyle.setVerticalAlignment(fstyle.getVerticalAlign());
-
-                font = wb.createFont();
-                font.setFontHeightInPoints((short) fstyle.getSize());
-                font.setColor((short) fstyle.getColor());
-                font.setItalic(fstyle.isItalic());
-                cellStyle.setFont(font);
-                // xssfCellStyle.setFillForegroundColor(fstyle.getBackgroundColor());
-                // xssfCellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-            }
-            setBorder();
-            this.stylesMap.put("footerStyle", cellStyle);
-        }
-
-        cellStyle = wb.createCellStyle();
-        cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
-        cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
-        font = wb.createFont();
-        font.setFontHeightInPoints((short) 12);
-        font.setBoldweight(Font.BOLDWEIGHT_NORMAL);
-        cellStyle.setFont(font);
-        setBorder();
-
-        // 设置单元格背景色
-        // xssfCellStyle.setFillForegroundColor(ExcelColor.GREY_25_PERCENT);
-        // xssfCellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-        stylesMap.put("titleStyle", cellStyle);
-
-        for (ExcelTitle excelTitle : allTitles) {
-            cellStyle = (CellStyle) wb.createCellStyle();
-            cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
-
-            ExcelCellStyle style = excelTitle.getCellStyle();
-            if (null != style) {
-                cellStyle.setAlignment(style.getAlign());
-                cellStyle.setVerticalAlignment(style.getVerticalAlign());
-
-                font = wb.createFont();
-                font.setFontHeightInPoints(style.getSize());
-                font.setColor(style.getColor());
-                cellStyle.setFont(font);
-            }
-            setBorder();
-            stylesMap.put("cellstyle_" + excelTitle.getIndex(), cellStyle);
-        }
-    }
-
     private void writeHeader() {
         if (null == metedata.getExcelTitle() || metedata.getExcelTitle().isEmpty()) {
             return;
         }
 
-        cellStyle = this.stylesMap.get("titleStyle");
         if (null != this.metedata.getExcelTitle() && !this.metedata.getExcelTitle().isEmpty()) {
+            cellStyle = this.stylesMap.get("titleStyle");
             List<ExcelTitle> titles = metedata.getExcelTitle();
             CellRangeAddress address = null;
             for (ExcelTitle ex : titles) {
@@ -206,8 +128,16 @@ public class DataToExcelWriter extends ExcelWriter {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void writeData() {
-        allDatas.stream().forEach(data -> {
-            Map<String, Object> dataMap = JsonUtil.stringToBean(JsonUtil.beanToString(data), Map.class);
+        if (null == this.allDatas || this.allDatas.isEmpty()) {
+            return;
+        }
+
+        for (Object object : allDatas) {
+            Map<String, Object> dataMap = JsonUtil.stringToBean(JsonUtil.beanToString(object), Map.class);
+            if (null == dataMap || dataMap.isEmpty()) {
+                continue;
+            }
+
             int rowsize = getColumns(dataMap);
             int maxRow = rownum + rowsize - 1;
             if (rowsize > 0) {
@@ -246,7 +176,7 @@ public class DataToExcelWriter extends ExcelWriter {
                 // row.setHeight((short) 0x249);
                 createCell(row, dataMap);
             }
-        });
+        }
     }
 
     private void createCell(Row row, Map<String, Object> data) {

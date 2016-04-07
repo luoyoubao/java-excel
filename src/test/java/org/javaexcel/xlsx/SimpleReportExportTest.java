@@ -33,7 +33,7 @@ public class SimpleReportExportTest {
         long begTime = System.currentTimeMillis();
         try {
             ExcelWriter writer = ExcelWriterFactory.getWriter(metadata.getFileType());
-            writer.process(metadata, datas, "/Users/Robert/Desktop/QA_test/user.xls");
+            writer.process(metadata, datas, "/Users/Robert/Desktop/QA_test/user.xlsx");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -45,7 +45,7 @@ public class SimpleReportExportTest {
     public void setUp() throws Exception {
         metadata = new ExcelMetaData();
         metadata.setFileName("SimpleReport");
-        metadata.setFileType("xls");
+        metadata.setFileType("xlsx");
         metadata.setSheetName("SimpleReport");
 
         // 设置大表头
@@ -72,7 +72,7 @@ public class SimpleReportExportTest {
         this.datas = new ArrayList<Object>();
         User user = null;
         for (int i = 0; i < ROWS; i++) {
-            user = new User(++i, "张晓明" + i, new Date(), "18913538888", "上海市浦东新区康桥御桥路200号");
+            user = new User(i + 1, "张晓明" + i, new Date(), "18913538888", "上海市浦东新区康桥御桥路200号", 0.45);
             this.datas.add(user);
         }
     }
@@ -89,7 +89,7 @@ public class SimpleReportExportTest {
         t1.setIndex(rownum++);
         t1.setName("id");
         t1.setDisplayName("ID");
-        t1.setDataType(CellType.TEXT);
+        t1.setDataType(CellType.INT);
         t1.setColumnWidth(8);
         titles.add(t1);
 
@@ -125,7 +125,16 @@ public class SimpleReportExportTest {
         t5.setColumnWidth(55);
         titles.add(t5);
 
+        ExcelTitle t6 = new ExcelTitle();
+        t6.setIndex(rownum++);
+        t6.setName("percent");
+        t6.setDisplayName("联系地址");
+        t6.setDataType(CellType.PERCENT);
+        t6.setColumnWidth(55);
+        titles.add(t6);
+
         this.metadata.setExcelTitle(titles);
+        this.metadata.setHasSubTitle(false);
     }
 
     class User {
@@ -134,6 +143,15 @@ public class SimpleReportExportTest {
         private Date birthday;
         private String telphone;
         private String address;
+        private double percent;
+
+        public double getPercent() {
+            return percent;
+        }
+
+        public void setPercent(double percent) {
+            this.percent = percent;
+        }
 
         /**
          * @param id
@@ -142,13 +160,14 @@ public class SimpleReportExportTest {
          * @param telphone
          * @param address
          */
-        public User(Integer id, String name, Date birthday, String telphone, String address) {
+        public User(Integer id, String name, Date birthday, String telphone, String address, double percent) {
             super();
             this.id = id;
             this.name = name;
             this.birthday = birthday;
             this.telphone = telphone;
             this.address = address;
+            this.percent = percent;
         }
 
         public Integer getId() {

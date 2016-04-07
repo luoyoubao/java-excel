@@ -55,7 +55,6 @@ public class XmlToExcelWriterTest {
         metadata.setFileName("expense");
         metadata.setFileType("xlsx");
         metadata.setSheetName("expense");
-        metadata.setHasSubTitle(true);
 
         // 设置大表头
         this.metadata.setHasHeader(true);

@@ -170,7 +170,12 @@ public class SpreadSheetWriter {
             _out.write(" s=\"" + styleIndex + "\"");
         }
         _out.write(">");
-        _out.write("<is><t>" + encoderXML(value) + "</t></is>");
+        if (null != value) {
+            _out.write("<is><t>" + encoderXML(value) + "</t></is>");
+        } else {
+            _out.write("<is><t></t></is>");
+        }
+
         _out.write("</c>");
     }
 
@@ -197,18 +202,6 @@ public class SpreadSheetWriter {
         _out.write("<c r=\"" + ref + "\" s=\"" + styleIndex + "\" />");
     }
 
-    public void createCell(int columnIndex, double value, int styleIndex)
-            throws IOException {
-        String ref = new CellReference(_rownum, columnIndex).formatAsString();
-        _out.write("<c r=\"" + ref + "\" t=\"n\"");
-        if (styleIndex != -1) {
-            _out.write(" s=\"" + styleIndex + "\"");
-        }
-        _out.write(">");
-        _out.write("<v>" + value + "</v>");
-        _out.write("</c>");
-    }
-
     /**
      * <p>
      * Encode the given text into xml.
@@ -219,8 +212,9 @@ public class SpreadSheetWriter {
      * @return the encoded string
      */
     public static String encoderXML(String string) {
-        if (string == null)
+        if (string == null) {
             return "";
+        }
         int n = string.length();
         char character;
         String xmlchar;
@@ -228,8 +222,6 @@ public class SpreadSheetWriter {
         // loop over all the characters of the String.
         for (int i = 0; i < n; i++) {
             character = string.charAt(i);
-            // the xmlcode of these characters are added to a StringBuffer
-            // one by one
             try {
                 xmlchar = xmlCode[character];
                 if (xmlchar == null) {

@@ -1,24 +1,18 @@
 package org.javaexcel.xlsx;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -34,6 +28,7 @@ import org.javaexcel.model.ExcelHeader;
 import org.javaexcel.model.ExcelMetaData;
 import org.javaexcel.model.ExcelTitle;
 import org.javaexcel.util.Const;
+import org.javaexcel.util.FileUtils;
 import org.javaexcel.util.JsonUtil;
 import org.javaexcel.util.UUIDUtil;
 
@@ -46,6 +41,13 @@ import org.javaexcel.util.UUIDUtil;
  * CreateTime  : 2016年4月1日
  */
 public class XmlToExcelWriter extends ExcelWriter {
+    // 存储所有的标题(子级标题)
+    private List<ExcelTitle> allTitles = new ArrayList<ExcelTitle>();
+    // 存储所有合并单元格
+    private List<CellMerge> cellMerges = new ArrayList<CellMerge>();
+    // 样式表
+    private Map<String, CellStyle> stylesMap = new HashMap<String, CellStyle>();
+
     private static final double DEFAULTROWHEIGHT = 16;
     private Workbook wb;
     private XSSFSheet sheet;
@@ -53,14 +55,9 @@ public class XmlToExcelWriter extends ExcelWriter {
     private List<Object> allDatas;
     private ExcelMetaData metedata;
     private CellMerge cellMerge;
-    private List<CellMerge> cellMerges = new ArrayList<CellMerge>();
-    private Map<String, CellStyle> stylesMap = new HashMap<String, CellStyle>();
     private int rownum = 0;
     private int columnSize = 0;
     private CellStyle xssfCellStyle;
-
-    // 存储所有的标题(子级标题)
-    private List<ExcelTitle> allTitles = new ArrayList<ExcelTitle>();
 
     /**
      * 导出文件
@@ -107,7 +104,7 @@ public class XmlToExcelWriter extends ExcelWriter {
             generate();
             wr.close();
 
-            substitute(tempFile, tmpXml, sheetRef.substring(1), os);
+            FileUtils.substitute(tempFile, tmpXml, sheetRef.substring(1), os);
             result = true;
         } catch (Exception e) {
             throw e;
@@ -421,38 +418,6 @@ public class XmlToExcelWriter extends ExcelWriter {
                 sw.createCell(et.getIndex(), et.getDisplayName(), xssfCellStyle.getIndex());
             }
             sw.endRow();
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static void substitute(String zipfile, String tmpfile,
-            String entry, OutputStream out) throws IOException {
-        ZipFile zip = new ZipFile(zipfile);
-        ZipOutputStream zos = new ZipOutputStream(out);
-        Enumeration<ZipEntry> en = (Enumeration<ZipEntry>) zip.entries();
-        while (en.hasMoreElements()) {
-            ZipEntry ze = en.nextElement();
-            if (!ze.getName().equals(entry)) {
-                zos.putNextEntry(new ZipEntry(ze.getName()));
-                InputStream is = zip.getInputStream(ze);
-                copyStream(is, zos);
-                is.close();
-            }
-        }
-        zos.putNextEntry(new ZipEntry(entry));
-        InputStream is = new FileInputStream(tmpfile);
-        copyStream(is, zos);
-        zip.close();
-        is.close();
-        zos.close();
-    }
-
-    private static void copyStream(InputStream in, OutputStream out)
-            throws IOException {
-        byte[] chunk = new byte[1024];
-        int count;
-        while ((count = in.read(chunk)) >= 0) {
-            out.write(chunk, 0, count);
         }
     }
 }

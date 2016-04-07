@@ -23,7 +23,7 @@ import org.javaexcel.util.JsonUtil;
  * Author      : Robert
  * CreateTime  : 2016年4月6日
  */
-public class ExcelWriterImpl extends ExcelWriter {
+public class DataToExcelWriter extends ExcelWriter {
     private List<ExcelTitle> allheaders = new ArrayList<ExcelTitle>();
     private List<ExcelTitle> bigheaders = new ArrayList<ExcelTitle>();
     private ExcelMetaData metedata;

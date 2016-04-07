@@ -9,7 +9,7 @@ import org.javaexcel.model.CellType;
 import org.javaexcel.model.ExcelMetaData;
 import org.javaexcel.model.ExcelTitle;
 import org.javaexcel.util.JsonUtil;
-import org.javaexcel.xls.ExcelWriterImpl;
+import org.javaexcel.xls.DataToExcelWriter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -178,7 +178,7 @@ public class ComplexExcelExportTest {
     public void test() {
         try {
             long begTime = System.currentTimeMillis();
-            boolean result = new ExcelWriterImpl().process(this.metadata, this.datas,
+            boolean result = new DataToExcelWriter().process(this.metadata, this.datas,
                     "/Users/Robert/Desktop/QA_test/expense.xls");
 
             System.out.println("Total:" + (System.currentTimeMillis() - begTime) + "ms");

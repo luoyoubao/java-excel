@@ -1,7 +1,6 @@
 package org.javaexcel.model;
 
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.ss.usermodel.CellStyle;
 
 /*
  * File name   : CellStyle.java
@@ -12,13 +11,13 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
  */
 public class ExcelCellStyle {
     // 水平居中
-    private short align = XSSFCellStyle.ALIGN_LEFT;
+    private short align = CellStyle.ALIGN_LEFT;
 
     // 垂直居中
-    private short verticalAlign = XSSFCellStyle.VERTICAL_CENTER;
+    private short verticalAlign = CellStyle.VERTICAL_CENTER;
 
     // 字体大小
-    private short size = XSSFFont.DEFAULT_FONT_SIZE;
+    private short size = 11;
 
     // 字体颜色
     private short color = ExcelColor.DEFAULT_COLOR;

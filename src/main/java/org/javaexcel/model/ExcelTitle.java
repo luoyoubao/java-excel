@@ -18,7 +18,7 @@ public class ExcelTitle {
     private String name;
 
     // 设置列宽
-    private double columnWidth;
+    private int columnWidth;
 
     // 列标题
     private String displayName;
@@ -60,11 +60,11 @@ public class ExcelTitle {
         this.index = index;
     }
 
-    public double getColumnWidth() {
+    public int getColumnWidth() {
         return columnWidth;
     }
 
-    public void setColumnWidth(double columnWidth) {
+    public void setColumnWidth(int columnWidth) {
         this.columnWidth = columnWidth;
     }
 

@@ -1,9 +1,12 @@
 package org.javaexcel.util;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -38,6 +41,20 @@ public class FileUtils {
         zip.close();
         is.close();
         zos.close();
+    }
+
+    /**
+     * 校验fileName的父目录是否存在
+     * 
+     * @param filePath
+     * @return
+     */
+    public static boolean isExistsOfParentDir(String filePath) {
+        File file = new File(filePath);
+        if (Files.notExists(Paths.get(file.getParent()))) {
+            return true;
+        }
+        return false;
     }
 
     private static void copyStream(InputStream in, OutputStream out)

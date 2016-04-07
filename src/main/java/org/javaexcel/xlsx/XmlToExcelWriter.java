@@ -1,6 +1,5 @@
 package org.javaexcel.xlsx;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -58,12 +57,11 @@ public class XmlToExcelWriter extends ExcelWriter {
         }
 
         // 校验fileName的父目录是否存在
-        File file = new File(fileName);
-        if (Files.notExists(Paths.get(file.getParent()))) {
+        if (FileUtils.isExistsOfParentDir(fileName)) {
             throw new Exception("Output directory does not exist.");
         }
 
-        try (OutputStream os = new FileOutputStream(file)) {
+        try (OutputStream os = new FileOutputStream(fileName)) {
             // 建立工作簿和电子表格对象
             wb = new XSSFWorkbook();
             sheet = (XSSFSheet) wb.createSheet(metedata.getSheetName());
@@ -93,31 +91,6 @@ public class XmlToExcelWriter extends ExcelWriter {
         }
 
         return result;
-    }
-
-    /**
-     * @throws Exception
-     * 
-     */
-    private void init() throws Exception {
-        List<ExcelTitle> titles = this.metedata.getExcelTitle();
-        if (null == titles || titles.isEmpty()) {
-            throw new Exception("The excel title is empty.");
-        }
-        for (ExcelTitle excelTitle : titles) {
-            if (null != excelTitle.getSubTitles() && !excelTitle.getSubTitles().isEmpty()) {
-                // 列设置不允许既需要合并单元格又有子标题
-                if (excelTitle.isMerge()) {
-                    throw new Exception("The column has sub title that cannot merge the cell.");
-                }
-
-                allTitles.addAll(excelTitle.getSubTitles());
-                columnSize += excelTitle.getSubTitles().size();
-                continue;
-            }
-            allTitles.add(excelTitle);
-            columnSize++;
-        }
     }
 
     /**
@@ -217,10 +190,6 @@ public class XmlToExcelWriter extends ExcelWriter {
      */
     @SuppressWarnings("unchecked")
     private void writeData() throws IOException, ParseException {
-        if (null == this.allDatas || this.allDatas.isEmpty()) {
-            return;
-        }
-
         for (Object object : allDatas) {
             Map<String, Object> dataMap = JsonUtil.stringToBean(JsonUtil.beanToString(object), Map.class);
             if (null == dataMap || dataMap.isEmpty()) {

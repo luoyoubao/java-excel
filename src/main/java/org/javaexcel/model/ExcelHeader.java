@@ -12,15 +12,15 @@ public class ExcelHeader {
     private String headerName;
 
     // 样式
-    private ExcelCellStyle cellStyle;
+    private ExcelCellStyle cellStyle = new ExcelCellStyle();
 
-    private double rowHeight = 50;
+    private float rowHeight = 50;
 
-    public double getRowHeight() {
+    public float getRowHeight() {
         return rowHeight;
     }
 
-    public void setRowHeight(double rowHeight) {
+    public void setRowHeight(float rowHeight) {
         this.rowHeight = rowHeight;
     }
 

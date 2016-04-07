@@ -26,7 +26,7 @@ import org.javaexcel.model.ExcelTitle;
  * CreateTime  : 2016年4月1日
  */
 public abstract class ExcelWriter {
-    protected static final double DEFAULTROWHEIGHT = 16;
+    protected static final short DEFAULTROWHEIGHT = 16;
     // 样式表
     protected Map<String, CellStyle> stylesMap = new HashMap<String, CellStyle>();
     // 存储所有的标题(子级标题)
@@ -51,6 +51,27 @@ public abstract class ExcelWriter {
      * @return
      */
     public abstract boolean process(ExcelMetaData metedata, List<Object> datas, String fileName) throws Exception;
+
+    protected void init() throws Exception {
+        List<ExcelTitle> titles = this.metedata.getExcelTitle();
+        if (null == titles || titles.isEmpty()) {
+            throw new Exception("The excel title is empty.");
+        }
+        for (ExcelTitle excelTitle : titles) {
+            if (null != excelTitle.getSubTitles() && !excelTitle.getSubTitles().isEmpty()) {
+                // 列设置不允许既需要合并单元格又有子标题
+                if (excelTitle.isMerge()) {
+                    throw new Exception("The column has sub title that cannot merge the cell.");
+                }
+
+                allTitles.addAll(excelTitle.getSubTitles());
+                columnSize += excelTitle.getSubTitles().size();
+                continue;
+            }
+            allTitles.add(excelTitle);
+            columnSize++;
+        }
+    }
 
     protected void initStyle() {
         ExcelCellStyle style = null;
@@ -101,7 +122,7 @@ public abstract class ExcelWriter {
         setBorder();
         stylesMap.put("titleStyle", cellStyle);
 
-        allTitles.stream().forEach(excelTitle -> {
+        for (ExcelTitle excelTitle : allTitles) {
             cellStyle = wb.createCellStyle();
             cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
             ExcelCellStyle estyle = excelTitle.getCellStyle();
@@ -116,7 +137,7 @@ public abstract class ExcelWriter {
             }
             setBorder();
             stylesMap.put("cellstyle_" + excelTitle.getIndex(), cellStyle);
-        });
+        }
     }
 
     public String getFormat(int index) {

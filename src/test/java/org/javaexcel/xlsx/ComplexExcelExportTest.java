@@ -5,7 +5,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.javaexcel.model.CellType;
+import org.javaexcel.model.ExcelCellStyle;
+import org.javaexcel.model.ExcelColor;
+import org.javaexcel.model.ExcelHeader;
 import org.javaexcel.model.ExcelMetaData;
 import org.javaexcel.model.ExcelTitle;
 import org.javaexcel.util.JsonUtil;
@@ -21,9 +25,23 @@ import org.junit.Test;
  * CreateTime  : 2016年3月28日
  */
 public class ComplexExcelExportTest {
-    private static final int ROWS = 100;
+    private static final int ROWS = 10;
     private ExcelMetaData metadata;
     private List<Object> datas;
+
+    @Test
+    public void test() {
+        try {
+            long begTime = System.currentTimeMillis();
+            boolean result = new DataToExcelWriter().process(this.metadata, this.datas,
+                    "/Users/Robert/Desktop/QA_test/expense.xls");
+
+            System.out.println("Total:" + (System.currentTimeMillis() - begTime) + "ms");
+            System.out.println("running>>>" + result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * @throws java.lang.Exception
@@ -35,6 +53,19 @@ public class ComplexExcelExportTest {
         metadata.setFileName("test");
         metadata.setFileType("xls");
         metadata.setSheetName("test data");
+        metadata.setHasSubTitle(true);
+
+        this.metadata.setHasHeader(true);
+        ExcelHeader header = new ExcelHeader();
+        header.setHeaderName("报表");
+        header.setRowHeight(42);
+        ExcelCellStyle style = new ExcelCellStyle();
+        style.setAlign(CellStyle.ALIGN_CENTER);
+        style.setVerticalAlign(CellStyle.VERTICAL_CENTER);
+        style.setColor(ExcelColor.RED);
+        style.setSize((short) 40);
+        header.setCellStyle(style);
+        this.metadata.setHeader(header);
 
         // 设置表头
         List<ExcelTitle> titles = new ArrayList<ExcelTitle>();
@@ -171,20 +202,6 @@ public class ComplexExcelExportTest {
             String es = JsonUtil.beanToString(e);
             Map<String, Object> em = JsonUtil.stringToBean(es, Map.class);
             datas.add(em);
-        }
-    }
-
-    @Test
-    public void test() {
-        try {
-            long begTime = System.currentTimeMillis();
-            boolean result = new DataToExcelWriter().process(this.metadata, this.datas,
-                    "/Users/Robert/Desktop/QA_test/expense.xls");
-
-            System.out.println("Total:" + (System.currentTimeMillis() - begTime) + "ms");
-            System.out.println("running>>>" + result);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

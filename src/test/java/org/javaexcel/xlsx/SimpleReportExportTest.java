@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.javaexcel.ExcelWriter;
+import org.javaexcel.ExcelWriterFactory;
 import org.javaexcel.model.CellType;
 import org.javaexcel.model.ExcelCellStyle;
 import org.javaexcel.model.ExcelColor;
@@ -22,7 +24,7 @@ import org.junit.Test;
  * CreateTime  : 2016年4月6日
  */
 public class SimpleReportExportTest {
-    private static final int ROWS = 100000;
+    private static final int ROWS = 10;
     private ExcelMetaData metadata;
     private List<Object> datas;
 
@@ -30,8 +32,8 @@ public class SimpleReportExportTest {
     public void test() {
         long begTime = System.currentTimeMillis();
         try {
-            XmlToExcelWriter writer = new XmlToExcelWriter();
-            writer.process(metadata, datas, "/Users/Robert/Desktop/QA_test/user.xlsx");
+            ExcelWriter writer = ExcelWriterFactory.getWriter(metadata.getFileType());
+            writer.process(metadata, datas, "/Users/Robert/Desktop/QA_test/user.xls");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -43,7 +45,7 @@ public class SimpleReportExportTest {
     public void setUp() throws Exception {
         metadata = new ExcelMetaData();
         metadata.setFileName("SimpleReport");
-        metadata.setFileType("xlsx");
+        metadata.setFileType("xls");
         metadata.setSheetName("SimpleReport");
 
         // 设置大表头

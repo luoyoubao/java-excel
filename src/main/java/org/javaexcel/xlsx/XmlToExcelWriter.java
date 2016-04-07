@@ -10,14 +10,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.javaexcel.ExcelWriter;
@@ -45,19 +42,11 @@ public class XmlToExcelWriter extends ExcelWriter {
     private List<ExcelTitle> allTitles = new ArrayList<ExcelTitle>();
     // 存储所有合并单元格
     private List<CellMerge> cellMerges = new ArrayList<CellMerge>();
-    // 样式表
-    private Map<String, CellStyle> stylesMap = new HashMap<String, CellStyle>();
 
     private static final double DEFAULTROWHEIGHT = 16;
-    private Workbook wb;
-    private XSSFSheet sheet;
+
     private SpreadSheetWriter sw;
-    private List<Object> allDatas;
-    private ExcelMetaData metedata;
     private CellMerge cellMerge;
-    private int rownum = 0;
-    private int columnSize = 0;
-    private CellStyle xssfCellStyle;
 
     /**
      * 导出文件
@@ -66,13 +55,11 @@ public class XmlToExcelWriter extends ExcelWriter {
      */
     public boolean process(ExcelMetaData metedata, List<Object> datas, String fileName) throws Exception {
         this.metedata = metedata;
-        this.allDatas = datas;
-
+        this.allDatas.addAll(datas);
         boolean result = false;
 
         String tempFile = Files.createTempFile(UUIDUtil.getUUID(), Const.EXCEL_SUFFIX_XLSX).toString();
         String tmpXml = Files.createTempFile(metedata.getSheetName(), Const.XML_SUFFIX).toString();
-
         if (fileName.endsWith(Const.EXCEL_SUFFIX_XLS)) {
             throw new Exception("Export 2003 version excel is not supported.");
         }
@@ -88,7 +75,7 @@ public class XmlToExcelWriter extends ExcelWriter {
             wb = new XSSFWorkbook();
             sheet = (XSSFSheet) wb.createSheet(metedata.getSheetName());
             // 持有电子表格数据的xml文件名 例如 /xl/worksheets/sheet1.xml
-            String sheetRef = sheet.getPackagePart().getPartName().getName();
+            String sheetRef = ((XSSFSheet) sheet).getPackagePart().getPartName().getName();
 
             init();
             initStyle();
@@ -116,104 +103,101 @@ public class XmlToExcelWriter extends ExcelWriter {
         return result;
     }
 
-    private void setBorder() {
-        xssfCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
-        xssfCellStyle.setBorderTop(CellStyle.BORDER_THIN);
-        xssfCellStyle.setBorderRight(CellStyle.BORDER_THIN);
-        xssfCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
-    }
-
-    /**
-     * 
-     */
     private void initStyle() {
+        ExcelCellStyle style = null;
         ExcelHeader header = metedata.getHeader();
         if (metedata.isHasHeader() && null != header) {
-            xssfCellStyle = (XSSFCellStyle) wb.createCellStyle();
-            ExcelCellStyle hsy = header.getCellStyle();
-            if (null != hsy) {
-                xssfCellStyle.setAlignment(hsy.getAlign());
-                xssfCellStyle.setVerticalAlignment(hsy.getVerticalAlign());
+            cellStyle = wb.createCellStyle();
+            style = header.getCellStyle();
+            if (null != style) {
+                cellStyle.setAlignment(style.getAlign());
+                cellStyle.setVerticalAlignment(style.getVerticalAlign());
 
-                XSSFFont font = (XSSFFont) wb.createFont();
-                font.setFontHeightInPoints((short) hsy.getSize());
-                font.setColor((short) hsy.getColor());
-                xssfCellStyle.setFont(font);
-                xssfCellStyle.setFillForegroundColor(hsy.getBackgroundColor());
-                xssfCellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+                font = wb.createFont();
+                font.setFontHeightInPoints(style.getSize());
+                font.setColor(style.getColor());
+                cellStyle.setFont(font);
+                cellStyle.setFillForegroundColor(style.getBackgroundColor());
+                cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
             }
             setBorder();
-            this.stylesMap.put("headerStyle", xssfCellStyle);
+            this.stylesMap.put("headerStyle", cellStyle);
         }
 
         ExcelFooter footer = metedata.getFooter();
         if (metedata.isHasFooter() && null != footer) {
-            xssfCellStyle = (XSSFCellStyle) wb.createCellStyle();
-            ExcelCellStyle fstyle = footer.getCellStyle();
-            if (null != fstyle) {
-                xssfCellStyle.setAlignment(fstyle.getAlign());
-                xssfCellStyle.setVerticalAlignment(fstyle.getVerticalAlign());
-
-                XSSFFont fot = (XSSFFont) wb.createFont();
-                fot.setFontHeightInPoints((short) fstyle.getSize());
-                fot.setColor((short) fstyle.getColor());
-                fot.setItalic(fstyle.isItalic());
-                xssfCellStyle.setFont(fot);
-                // xssfCellStyle.setFillForegroundColor(fstyle.getBackgroundColor());
-                // xssfCellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-            }
-            setBorder();
-            this.stylesMap.put("footerStyle", xssfCellStyle);
-        }
-
-        xssfCellStyle = (XSSFCellStyle) wb.createCellStyle();
-        xssfCellStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER);
-        xssfCellStyle.setVerticalAlignment(XSSFCellStyle.VERTICAL_CENTER);
-        XSSFFont ff = (XSSFFont) wb.createFont();
-        ff.setFontHeightInPoints((short) 12);
-        ff.setBoldweight(XSSFFont.BOLDWEIGHT_NORMAL);
-        xssfCellStyle.setFont(ff);
-        setBorder();
-
-        // 设置单元格背景色
-        // xssfCellStyle.setFillForegroundColor(ExcelColor.GREY_25_PERCENT);
-        // xssfCellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-        stylesMap.put("titleStyle", xssfCellStyle);
-
-        for (ExcelTitle excelTitle : allTitles) {
-            xssfCellStyle = (XSSFCellStyle) wb.createCellStyle();
-            xssfCellStyle.setAlignment(XSSFCellStyle.ALIGN_LEFT);
-
-            ExcelCellStyle style = excelTitle.getCellStyle();
+            cellStyle = wb.createCellStyle();
+            style = footer.getCellStyle();
             if (null != style) {
-                xssfCellStyle.setAlignment(style.getAlign());
-                xssfCellStyle.setVerticalAlignment(style.getVerticalAlign());
+                cellStyle.setAlignment(style.getAlign());
+                cellStyle.setVerticalAlignment(style.getVerticalAlign());
 
-                XSSFFont ft = (XSSFFont) wb.createFont();
-                ft.setFontHeightInPoints(style.getSize());
-                ft.setColor(style.getColor());
-                xssfCellStyle.setFont(ft);
+                font = wb.createFont();
+                font.setFontHeightInPoints(style.getSize());
+                font.setColor(style.getColor());
+                font.setItalic(style.isItalic());
+                cellStyle.setFont(font);
+                cellStyle.setFillForegroundColor(style.getBackgroundColor());
+                cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
             }
             setBorder();
-            stylesMap.put("cellstyle_" + excelTitle.getIndex(), xssfCellStyle);
+            this.stylesMap.put("footerStyle", cellStyle);
         }
+
+        cellStyle = wb.createCellStyle();
+        cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+        cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+        font = wb.createFont();
+        font.setFontHeightInPoints((short) 12);
+        font.setBoldweight(Font.BOLDWEIGHT_NORMAL);
+        cellStyle.setFont(font);
+        setBorder();
+        stylesMap.put("titleStyle", cellStyle);
+
+        allTitles.stream().forEach(excelTitle -> {
+            cellStyle = wb.createCellStyle();
+            cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
+            ExcelCellStyle estyle = excelTitle.getCellStyle();
+            if (null != estyle) {
+                cellStyle.setAlignment(estyle.getAlign());
+                cellStyle.setVerticalAlignment(estyle.getVerticalAlign());
+
+                font = wb.createFont();
+                font.setFontHeightInPoints(estyle.getSize());
+                font.setColor(estyle.getColor());
+                cellStyle.setFont(font);
+            }
+            setBorder();
+            stylesMap.put("cellstyle_" + excelTitle.getIndex(), cellStyle);
+        });
     }
 
     /**
      * @throws Exception
      * 
      */
-    private void init() throws Exception {
-        for (int i = 0; i < metedata.getExcelTitle().size(); i++) {
-            ExcelTitle excelTitle = metedata.getExcelTitle().get(i);
-            if (null != excelTitle.getSubTitles() && !excelTitle.getSubTitles().isEmpty()) {
-                allTitles.addAll(excelTitle.getSubTitles());
-                columnSize += excelTitle.getSubTitles().size();
-                continue;
+    private void init() {
+        metedata.getExcelTitle().stream().forEach(et -> {
+            if (null != et.getSubTitles() && !et.getSubTitles().isEmpty()) {
+                allTitles.addAll(et.getSubTitles());
+                columnSize += et.getSubTitles().size();
+            } else {
+                allTitles.add(et);
+                columnSize++;
             }
-            allTitles.add(excelTitle);
-            columnSize++;
-        }
+        });
+
+        // for (int i = 0; i < metedata.getExcelTitle().size(); i++) {
+        // ExcelTitle excelTitle = metedata.getExcelTitle().get(i);
+        // if (null != excelTitle.getSubTitles() &&
+        // !excelTitle.getSubTitles().isEmpty()) {
+        // allTitles.addAll(excelTitle.getSubTitles());
+        // columnSize += excelTitle.getSubTitles().size();
+        // continue;
+        // }
+        // allTitles.add(excelTitle);
+        // columnSize++;
+        // }
     }
 
     /**
@@ -237,7 +221,7 @@ public class XmlToExcelWriter extends ExcelWriter {
 
         sw.beginSheetData();
         // 写大表头
-        writeBigTitle();
+        writeHeader();
 
         // 写标题
         writeTitle();
@@ -249,7 +233,8 @@ public class XmlToExcelWriter extends ExcelWriter {
         writeFooter();
         sw.endSheetData();
 
-        if (null != cellMerges && !cellMerges.isEmpty()) {
+        // 设置合并单元格
+        if (!cellMerges.isEmpty()) {
             sw.beginMergerCell(cellMerges.size());
             for (CellMerge mc : cellMerges) {
                 sw.setMergeCell(mc.getBeginColumn(), mc.getBeginCell(), mc.getEndColumn(), mc.getEndCell());
@@ -266,17 +251,17 @@ public class XmlToExcelWriter extends ExcelWriter {
      * 
      */
     private void writeFooter() throws IOException {
-        if (this.metedata.isHasFooter()) {
-            xssfCellStyle = this.stylesMap.get("footerStyle");
-            sw.insertRowWithHeight(rownum, columnSize - 1, 25);
+        if (this.metedata.isHasFooter() && null != this.metedata.getFooter()) {
+            cellStyle = this.stylesMap.get("footerStyle");
+            sw.insertRowWithHeight(rownum, columnSize, this.metedata.getFooter().getRowHeight());
             for (int i = 0; i < this.columnSize; i++) {
                 if (0 == i) {
-                    sw.createCell(i, metedata.getFooter().getRemarks(), xssfCellStyle.getIndex());
+                    sw.createCell(i, metedata.getFooter().getRemarks(), cellStyle.getIndex());
                     cellMerge = new CellMerge(rownum, i, rownum, columnSize - 1);
                     cellMerges.add(cellMerge);
                     continue;
                 }
-                sw.createCell(i, xssfCellStyle.getIndex());
+                sw.createCell(i, cellStyle.getIndex());
             }
             sw.endRow();
         }
@@ -286,18 +271,18 @@ public class XmlToExcelWriter extends ExcelWriter {
      * @throws IOException
      * 
      */
-    private void writeBigTitle() throws IOException {
-        if (this.metedata.isHasHeader()) {
-            xssfCellStyle = this.stylesMap.get("headerStyle");
-            sw.insertRowWithHeight(rownum, columnSize, 45);
+    private void writeHeader() throws IOException {
+        if (this.metedata.isHasHeader() && null != this.metedata.getHeader()) {
+            cellStyle = this.stylesMap.get("headerStyle");
+            sw.insertRowWithHeight(rownum, columnSize, metedata.getHeader().getRowHeight());
             for (int i = 0; i < columnSize; i++) {
                 if (0 == i) {
-                    sw.createCell(i, metedata.getHeader().getHeaderName(), xssfCellStyle.getIndex());
+                    sw.createCell(i, metedata.getHeader().getHeaderName(), cellStyle.getIndex());
                     cellMerge = new CellMerge(rownum, i, rownum, columnSize - 1);
                     cellMerges.add(cellMerge);
                     continue;
                 }
-                sw.createCell(i, xssfCellStyle.getIndex());
+                sw.createCell(i, cellStyle.getIndex());
             }
 
             sw.endRow();
@@ -329,21 +314,21 @@ public class XmlToExcelWriter extends ExcelWriter {
                     sw.insertRowWithHeight(rownum, columnSize, DEFAULTROWHEIGHT);
                     for (ExcelTitle eh : this.metedata.getExcelTitle()) {
                         Object obj = dataMap.get(eh.getName());
-                        xssfCellStyle = this.stylesMap.get("cellstyle_" + eh.getIndex());
+                        cellStyle = this.stylesMap.get("cellstyle_" + eh.getIndex());
                         if (eh.isMerge()) {
                             if (0 == i) {
                                 cellMerge = new CellMerge(rownum, eh.getIndex(), maxRow, eh.getIndex());
                                 cellMerges.add(cellMerge);
-                                sw.createCell(eh.getIndex(), obj.toString(), xssfCellStyle.getIndex());
+                                sw.createCell(eh.getIndex(), obj.toString(), cellStyle.getIndex());
                                 continue;
                             }
-                            sw.createCell(eh.getIndex(), xssfCellStyle.getIndex());
+                            sw.createCell(eh.getIndex(), cellStyle.getIndex());
                         } else if (!eh.getSubTitles().isEmpty() && (obj instanceof List)) {
                             List<Object> list = (List<Object>) obj;
                             Map<String, Object> detailData = (Map<String, Object>) list.get(i);
                             for (ExcelTitle ele : eh.getSubTitles()) {
-                                xssfCellStyle = this.stylesMap.get("cellstyle_" + ele.getIndex());
-                                sw.createCell(ele.getIndex(), detailData.get(ele.getName()).toString(), xssfCellStyle.getIndex());
+                                cellStyle = this.stylesMap.get("cellstyle_" + ele.getIndex());
+                                sw.createCell(ele.getIndex(), detailData.get(ele.getName()).toString(), cellStyle.getIndex());
                             }
                         }
                     }
@@ -353,8 +338,8 @@ public class XmlToExcelWriter extends ExcelWriter {
             } else {
                 sw.insertRowWithHeight(rownum++, columnSize, DEFAULTROWHEIGHT);
                 for (ExcelTitle eh : this.allTitles) {
-                    xssfCellStyle = this.stylesMap.get("cellstyle_" + eh.getIndex());
-                    sw.createCell(eh.getIndex(), dataMap.get(eh.getName()).toString(), xssfCellStyle.getIndex());
+                    cellStyle = this.stylesMap.get("cellstyle_" + eh.getIndex());
+                    sw.createCell(eh.getIndex(), dataMap.get(eh.getName()).toString(), cellStyle.getIndex());
                 }
                 sw.endRow();
             }
@@ -376,10 +361,9 @@ public class XmlToExcelWriter extends ExcelWriter {
             return;
         }
 
-        xssfCellStyle = this.stylesMap.get("titleStyle");
-
         // 写EXCEL表头
         if (metedata.isHasSubTitle()) {
+            cellStyle = this.stylesMap.get("titleStyle");
             for (int i = 0; i < 2; i++) {
                 sw.insertRowWithHeight(rownum, columnSize, DEFAULTROWHEIGHT);
                 for (ExcelTitle excelTitle : metedata.getExcelTitle()) {
@@ -387,10 +371,10 @@ public class XmlToExcelWriter extends ExcelWriter {
                         if (0 == i) {
                             cellMerge = new CellMerge(rownum, excelTitle.getIndex(), rownum + 1, excelTitle.getIndex());
                             cellMerges.add(cellMerge);
-                            sw.createCell(excelTitle.getIndex(), excelTitle.getDisplayName(), xssfCellStyle.getIndex());
+                            sw.createCell(excelTitle.getIndex(), excelTitle.getDisplayName(), cellStyle.getIndex());
                             continue;
                         }
-                        sw.createCell(excelTitle.getIndex(), xssfCellStyle.getIndex());
+                        sw.createCell(excelTitle.getIndex(), cellStyle.getIndex());
                     } else if (null != excelTitle.getSubTitles() && !excelTitle.getSubTitles().isEmpty()) {
                         for (int j = 0; j < excelTitle.getSubTitles().size(); j++) {
                             ExcelTitle ct = excelTitle.getSubTitles().get(j);
@@ -399,12 +383,12 @@ public class XmlToExcelWriter extends ExcelWriter {
                                     cellMerge = new CellMerge(rownum, ct.getIndex(), rownum,
                                             excelTitle.getSubTitles().get(excelTitle.getSubTitles().size() - 1).getIndex());
                                     cellMerges.add(cellMerge);
-                                    sw.createCell(ct.getIndex(), ct.getDisplayName(), xssfCellStyle.getIndex());
+                                    sw.createCell(ct.getIndex(), ct.getDisplayName(), cellStyle.getIndex());
                                     continue;
                                 }
-                                sw.createCell(ct.getIndex(), xssfCellStyle.getIndex());
+                                sw.createCell(ct.getIndex(), cellStyle.getIndex());
                             } else {
-                                sw.createCell(ct.getIndex(), ct.getDisplayName(), xssfCellStyle.getIndex());
+                                sw.createCell(ct.getIndex(), ct.getDisplayName(), cellStyle.getIndex());
                             }
                         }
                     }
@@ -415,7 +399,7 @@ public class XmlToExcelWriter extends ExcelWriter {
         } else {
             sw.insertRowWithHeight(rownum++, columnSize, DEFAULTROWHEIGHT);
             for (ExcelTitle et : this.allTitles) {
-                sw.createCell(et.getIndex(), et.getDisplayName(), xssfCellStyle.getIndex());
+                sw.createCell(et.getIndex(), et.getDisplayName(), cellStyle.getIndex());
             }
             sw.endRow();
         }

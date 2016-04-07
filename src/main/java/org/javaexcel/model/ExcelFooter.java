@@ -14,6 +14,17 @@ public class ExcelFooter {
     // 样式
     private ExcelCellStyle cellStyle;
 
+    // 设置行高
+    private double rowHeight = 25;
+
+    public double getRowHeight() {
+        return rowHeight;
+    }
+
+    public void setRowHeight(double rowHeight) {
+        this.rowHeight = rowHeight;
+    }
+
     public String getRemarks() {
         return remarks;
     }

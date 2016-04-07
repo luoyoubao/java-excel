@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.javaexcel.ExcelWriter;
+import org.javaexcel.ExcelWriterFactory;
 import org.javaexcel.model.CellType;
 import org.javaexcel.model.ExcelCellStyle;
 import org.javaexcel.model.ExcelColor;
@@ -35,9 +37,7 @@ public class XmlToExcelWriterTest {
     public void test() {
         long begTime = System.currentTimeMillis();
         try {
-            XmlToExcelWriter writer = new XmlToExcelWriter();
-            // writer.process(metadata, datas,
-            // "/Users/Robert/Desktop/QA_test/expense.xlsx");
+            ExcelWriter writer = ExcelWriterFactory.getWriter(this.metadata.getFileType());
             writer.process(metadata, datas, "/Users/Robert/Desktop/QA_test/expense.xlsx");
         } catch (Exception e) {
             e.printStackTrace();
@@ -61,6 +61,7 @@ public class XmlToExcelWriterTest {
         this.metadata.setHasHeader(true);
         ExcelHeader header = new ExcelHeader();
         header.setHeaderName("报销单");
+        header.setRowHeight(40);
         ExcelCellStyle hs = new ExcelCellStyle();
         hs.setAlign(XSSFCellStyle.ALIGN_CENTER);
         hs.setVerticalAlign(XSSFCellStyle.ALIGN_CENTER);

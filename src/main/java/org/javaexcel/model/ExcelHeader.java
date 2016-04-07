@@ -14,6 +14,16 @@ public class ExcelHeader {
     // 样式
     private ExcelCellStyle cellStyle;
 
+    private double rowHeight = 50;
+
+    public double getRowHeight() {
+        return rowHeight;
+    }
+
+    public void setRowHeight(double rowHeight) {
+        this.rowHeight = rowHeight;
+    }
+
     public String getHeaderName() {
         return headerName;
     }

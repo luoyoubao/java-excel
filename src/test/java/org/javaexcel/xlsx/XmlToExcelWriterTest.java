@@ -118,10 +118,11 @@ public class XmlToExcelWriterTest {
      * 
      */
     private void structureMetaData() {
+        int rownum = 0;
         // 设置表头
         List<ExcelTitle> titles = new ArrayList<ExcelTitle>();
         ExcelTitle t1 = new ExcelTitle();
-        t1.setIndex(0);
+        t1.setIndex(rownum++);
         t1.setName("billType");
         t1.setDisplayName("单据类型");
         t1.setDataType(CellType.TEXT);
@@ -129,7 +130,7 @@ public class XmlToExcelWriterTest {
         titles.add(t1);
 
         ExcelTitle t2 = new ExcelTitle();
-        t2.setIndex(1);
+        t1.setIndex(rownum++);
         t2.setName("billName");
         t2.setDisplayName("单据名称");
         t2.setDataType(CellType.TEXT);
@@ -137,7 +138,7 @@ public class XmlToExcelWriterTest {
         titles.add(t2);
 
         ExcelTitle t3 = new ExcelTitle();
-        t3.setIndex(2);
+        t1.setIndex(rownum++);
         t3.setName("createUserId");
         t3.setDisplayName("提交人");
         t3.setDataType(CellType.TEXT);
@@ -145,7 +146,7 @@ public class XmlToExcelWriterTest {
         titles.add(t3);
 
         ExcelTitle t4 = new ExcelTitle();
-        t4.setIndex(3);
+        t1.setIndex(rownum++);
         t4.setName("owner");
         t4.setDisplayName("费用归属");
         t4.setDataType(CellType.TEXT);
@@ -153,7 +154,7 @@ public class XmlToExcelWriterTest {
         titles.add(t4);
 
         ExcelTitle t5 = new ExcelTitle();
-        t5.setIndex(4);
+        t1.setIndex(rownum++);
         t5.setName("submitDate");
         t5.setDisplayName("审批提交日期");
         t5.setDataType(CellType.DATE);
@@ -166,7 +167,7 @@ public class XmlToExcelWriterTest {
         titles.add(t5);
 
         ExcelTitle t6 = new ExcelTitle();
-        t6.setIndex(5);
+        t1.setIndex(rownum++);
         t6.setName("status");
         t6.setDisplayName("审批状态");
         t6.setDataType(CellType.TEXT);
@@ -182,28 +183,28 @@ public class XmlToExcelWriterTest {
         List<ExcelTitle> subTitles = new ArrayList<ExcelTitle>();
         // 初始化子项
         ExcelTitle t8 = new ExcelTitle();
-        t8.setIndex(6);
+        t1.setIndex(rownum++);
         t8.setName("costtype");
         t8.setDisplayName("费用类型");
         t8.setDataType(CellType.TEXT);
         subTitles.add(t8);
 
         ExcelTitle t9 = new ExcelTitle();
-        t9.setIndex(7);
+        t1.setIndex(rownum++);
         t9.setName("costCreateTime");
         t9.setDisplayName("费用发生时间");
         t9.setDataType(CellType.DATE);
         subTitles.add(t9);
 
         ExcelTitle t10 = new ExcelTitle();
-        t10.setIndex(8);
+        t1.setIndex(rownum++);
         t10.setName("costDesc");
         t10.setDisplayName("费用描述");
         t10.setDataType(CellType.TEXT);
         subTitles.add(t10);
 
         ExcelTitle t11 = new ExcelTitle();
-        t11.setIndex(9);
+        t1.setIndex(rownum++);
         t11.setName("costMoney");
         t11.setDisplayName("费用金额");
         t11.setDataType(CellType.MONEY);
@@ -212,7 +213,7 @@ public class XmlToExcelWriterTest {
         t7.setSubTitles(subTitles);
 
         ExcelTitle t12 = new ExcelTitle();
-        t12.setIndex(10);
+        t1.setIndex(rownum++);
         t12.setName("expenseMoney");
         t12.setDisplayName("报销金额");
         t12.setDataType(CellType.MONEY);
@@ -225,7 +226,7 @@ public class XmlToExcelWriterTest {
         titles.add(t12);
 
         ExcelTitle t13 = new ExcelTitle();
-        t13.setIndex(11);
+        t1.setIndex(rownum++);
         t13.setName("loanMoney");
         t13.setDisplayName("借款金额");
         t13.setDataType(CellType.MONEY);

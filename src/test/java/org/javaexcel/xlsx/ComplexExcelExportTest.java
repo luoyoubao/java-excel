@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.javaexcel.ExcelWriter;
 import org.javaexcel.ExcelWriterFactory;
 import org.javaexcel.model.CellType;
@@ -28,7 +29,7 @@ import org.junit.Test;
  * CreateTime  : 2016年3月28日
  */
 public class ComplexExcelExportTest {
-    private static final int ROWS = 100;
+    private static final int ROWS = 6;
     private ExcelMetaData metadata;
     private List<Object> datas;
 
@@ -50,33 +51,52 @@ public class ComplexExcelExportTest {
      */
     @Before
     public void setUp() throws Exception {
-        int rownum = 0;
         metadata = new ExcelMetaData();
         metadata.setFileName("test");
         metadata.setSheetName("test data");
         metadata.setHasSubTitle(true);
 
+        // 设置大表头
         this.metadata.setHasHeader(true);
         ExcelHeader header = new ExcelHeader();
-        header.setHeaderName("报表");
-        header.setRowHeight(42);
-        ExcelCellStyle style = new ExcelCellStyle();
-        style.setAlign(CellStyle.ALIGN_CENTER);
-        style.setVerticalAlign(CellStyle.VERTICAL_CENTER);
-        style.setColor(ExcelColor.RED);
-        style.setSize((short) 40);
-        header.setCellStyle(style);
+        header.setHeaderName("报销单");
+        header.setRowHeight(50);
+        ExcelCellStyle hs = new ExcelCellStyle();
+        hs.setAlign(CellStyle.ALIGN_CENTER);
+        hs.setVerticalAlign(CellStyle.ALIGN_CENTER);
+        hs.setSize((short) 42);
+        hs.setColor(ExcelColor.RED);
+        header.setCellStyle(hs);
         this.metadata.setHeader(header);
+
+        // 设置标题格式
+        ExcelCellStyle titleStyle = new ExcelCellStyle();
+        titleStyle.setAlign(CellStyle.ALIGN_CENTER);
+        titleStyle.setSize((short) 12);
+        titleStyle.setItalic(true);
+        titleStyle.setBackgroundColor(ExcelColor.GREY_25_PERCENT);
+        this.metadata.setTitleStyle(titleStyle);
 
         this.metadata.setHasFooter(true);
         ExcelFooter footer = new ExcelFooter();
-        footer.setRemarks("说明:尾部");
-        ExcelCellStyle sy = new ExcelCellStyle();
-        sy.setAlign(CellStyle.ALIGN_LEFT);
-        sy.setVerticalAlign(CellStyle.VERTICAL_CENTER);
-        sy.setSize((short) 10);
-        footer.setCellStyle(sy);
+        footer.setRemarks("说明:本文档版权所有,违法必究");
+        ExcelCellStyle footcs = new ExcelCellStyle();
+        footcs.setVerticalAlign(XSSFCellStyle.VERTICAL_CENTER);
+        footcs.setColor(ExcelColor.BLUE);
+        footcs.setItalic(true);
+        footer.setCellStyle(footcs);
         this.metadata.setFooter(footer);
+
+        // long btime = System.currentTimeMillis();
+        structureMetaData();
+        constructdata();
+        // System.out.println("init data:" + (System.currentTimeMillis() -
+        // btime) + "ms");
+        // System.out.println(JsonUtil.beanToString(req));
+    }
+
+    private void structureMetaData() {
+        int rownum = 0;
 
         // 设置表头
         List<ExcelTitle> titles = new ArrayList<ExcelTitle>();
@@ -86,6 +106,7 @@ public class ComplexExcelExportTest {
         t1.setDisplayName("单据类型");
         t1.setDataType(CellType.TEXT);
         t1.setMerge(true);
+        t1.setColumnWidth(12);
         titles.add(t1);
 
         ExcelTitle t2 = new ExcelTitle();
@@ -94,6 +115,7 @@ public class ComplexExcelExportTest {
         t2.setDisplayName("单据名称");
         t2.setDataType(CellType.TEXT);
         t2.setMerge(true);
+        t2.setColumnWidth(13);
         titles.add(t2);
 
         ExcelTitle t3 = new ExcelTitle();
@@ -118,6 +140,7 @@ public class ComplexExcelExportTest {
         t5.setDisplayName("审批提交日期");
         t5.setDataType(CellType.DATE);
         t5.setMerge(true);
+        t5.setColumnWidth(20);
         titles.add(t5);
 
         ExcelTitle t6 = new ExcelTitle();
@@ -183,12 +206,6 @@ public class ComplexExcelExportTest {
         titles.add(t13);
 
         this.metadata.setExcelTitle(titles);
-
-        // long btime = System.currentTimeMillis();
-        constructdata();
-        // System.out.println("init data:" + (System.currentTimeMillis() -
-        // btime) + "ms");
-        // System.out.println(JsonUtil.beanToString(req));
     }
 
     /**

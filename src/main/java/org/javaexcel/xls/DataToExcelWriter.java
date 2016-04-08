@@ -82,7 +82,6 @@ public class DataToExcelWriter extends ExcelWriter {
         if (fileName.toLowerCase().endsWith(Const.EXCEL_SUFFIX_XLS)) {
             wb = new HSSFWorkbook();
         } else {
-            // wb = new SXSSFWorkbook(100);
             wb = new XSSFWorkbook();
         }
     }
@@ -174,11 +173,10 @@ public class DataToExcelWriter extends ExcelWriter {
 
     private void createCell(Row row, ExcelTitle ete) {
         if (ete.getColumnWidth() > 0) {
-            sheet.setColumnWidth(ete.getIndex(), ete.getColumnWidth());
+            sheet.setColumnWidth(ete.getIndex(), ete.getColumnWidth() * 256);
         } else {
             sheet.setColumnWidth(ete.getIndex(), ete.getDisplayName().length() * 4 * 256);
         }
-
         CellUtil.createCell(row, ete.getIndex(), ete.getDisplayName(), cellStyle);
     }
 
@@ -203,10 +201,6 @@ public class DataToExcelWriter extends ExcelWriter {
                 row = sheet.createRow(rownum++);
                 row.setHeightInPoints(DEFAULTROWHEIGHT);
                 for (ExcelTitle eh : mergeTitles) {
-                    // cellStyle = this.getStyle("cellstyle_" + eh.getIndex());
-                    // CellUtil.createCell(row, eh.getIndex(),
-                    // dataMap.get(eh.getName()) + "", cellStyle);
-
                     createCell(eh, dataMap.get(eh.getName()));
                 }
 
@@ -216,11 +210,6 @@ public class DataToExcelWriter extends ExcelWriter {
                         if (obj instanceof List) {
                             Map<String, Object> detailData = (Map<String, Object>) ((List) obj).get(i);
                             ele.getSubTitles().stream().forEach(exte -> {
-                                // cellStyle = this.getStyle("cellstyle_" +
-                                // exte.getIndex());
-                                // CellUtil.createCell(row, exte.getIndex(),
-                                // detailData.get(exte.getName()) + "",
-                                // cellStyle);
                                 createCell(exte, detailData.get(exte.getName()));
                             });
                         }
@@ -266,8 +255,6 @@ public class DataToExcelWriter extends ExcelWriter {
                 cell.setCellValue(result);
                 break;
         }
-
-        // CellUtil.createCell(row, ete.getIndex(), result, cellStyle);
     }
 
     private void createAllCell(Row row, Map<String, Object> data) {

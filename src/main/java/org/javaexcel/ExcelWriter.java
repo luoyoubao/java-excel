@@ -128,7 +128,7 @@ public abstract class ExcelWriter {
                 this.cellStyle.setDataFormat(datafmt.getFormat("0"));
                 break;
             case MONEY:
-                this.cellStyle.setDataFormat(datafmt.getFormat("#,##0.00"));
+                this.cellStyle.setDataFormat(datafmt.getFormat("￥#,##0.00"));
                 break;
             case PERCENT:
                 this.cellStyle.setDataFormat(datafmt.getFormat("00.00%"));

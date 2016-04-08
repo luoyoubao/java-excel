@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class ExcelTitle {
     // 列索引
-    private Integer index;
+    private int index;
 
     // 列名
     private String name;
@@ -52,11 +52,11 @@ public class ExcelTitle {
         this.cellStyle = cellStyle;
     }
 
-    public Integer getIndex() {
+    public int getIndex() {
         return index;
     }
 
-    public void setIndex(Integer index) {
+    public void setIndex(int index) {
         this.index = index;
     }
 

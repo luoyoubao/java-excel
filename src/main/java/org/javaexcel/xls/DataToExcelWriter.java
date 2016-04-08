@@ -166,7 +166,7 @@ public class DataToExcelWriter extends ExcelWriter {
             row = sheet.createRow(rownum++);
             row.setHeightInPoints(DEFAULTROWHEIGHT);
             for (ExcelTitle eh : this.metedata.getExcelTitle()) {
-                CellUtil.createCell(row, eh.getIndex(), eh.getName(), cellStyle);
+                CellUtil.createCell(row, eh.getIndex(), eh.getDisplayName(), cellStyle);
             }
         }
     }
@@ -242,10 +242,9 @@ public class DataToExcelWriter extends ExcelWriter {
         }
 
         cell = row.createCell(ete.getIndex());
-        cell.setCellStyle(cellStyle);
         switch (ete.getDataType()) {
-            case NUMBER:
             case INT:
+            case NUMBER:
             case MONEY:
             case PERCENT:
                 cell.setCellValue(Double.valueOf(obj.toString()));
@@ -255,12 +254,12 @@ public class DataToExcelWriter extends ExcelWriter {
                 cell.setCellValue(result);
                 break;
         }
+        cell.setCellStyle(cellStyle);
     }
 
     private void createAllCell(Row row, Map<String, Object> data) {
         allTitles.stream().forEach(eh -> {
-            cellStyle = this.getStyle("cellstyle_" + eh.getIndex());
-            CellUtil.createCell(row, eh.getIndex(), data.get(eh.getName()) + "", cellStyle);
+            createCell(eh, data.get(eh.getName()));
         });
     }
 

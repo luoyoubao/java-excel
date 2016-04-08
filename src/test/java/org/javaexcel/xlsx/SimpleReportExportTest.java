@@ -33,8 +33,8 @@ public class SimpleReportExportTest {
     public void test() {
         long begTime = System.currentTimeMillis();
         try {
-            ExcelWriter writer = ExcelWriterFactory.getWriter(ExcelType.XLSX);
-            writer.process(metadata, datas, "/Users/Robert/Desktop/QA_test/user.xlsx");
+            ExcelWriter writer = ExcelWriterFactory.getWriter(ExcelType.XLS);
+            writer.process(metadata, datas, "/Users/Robert/Desktop/QA_test/user.xls");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -15,13 +15,13 @@ public class ExcelFooter {
     private ExcelCellStyle cellStyle;
 
     // 设置行高
-    private double rowHeight = 25;
+    private float rowHeight = 25;
 
-    public double getRowHeight() {
+    public float getRowHeight() {
         return rowHeight;
     }
 
-    public void setRowHeight(double rowHeight) {
+    public void setRowHeight(float rowHeight) {
         this.rowHeight = rowHeight;
     }
 

@@ -16,6 +16,7 @@ import org.javaexcel.model.ExcelFooter;
 import org.javaexcel.model.ExcelHeader;
 import org.javaexcel.model.ExcelMetaData;
 import org.javaexcel.model.ExcelTitle;
+import org.javaexcel.model.ExcelType;
 import org.javaexcel.util.JsonUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +30,7 @@ import org.junit.Test;
  * CreateTime  : 2016年4月2日
  */
 public class XmlToExcelWriterTest {
-    private static final int ROWS = 10;
+    private static final int ROWS = 100;
     private ExcelMetaData metadata;
     private List<Object> datas;
 
@@ -37,7 +38,7 @@ public class XmlToExcelWriterTest {
     public void test() {
         long begTime = System.currentTimeMillis();
         try {
-            ExcelWriter writer = ExcelWriterFactory.getWriter(this.metadata.getFileType());
+            ExcelWriter writer = ExcelWriterFactory.getWriter(ExcelType.XLSX);
             writer.process(metadata, datas, "/Users/Robert/Desktop/QA_test/expense.xlsx");
         } catch (Exception e) {
             e.printStackTrace();
@@ -53,7 +54,6 @@ public class XmlToExcelWriterTest {
     public void setUp() throws Exception {
         metadata = new ExcelMetaData();
         metadata.setFileName("expense");
-        metadata.setFileType("xlsx");
         metadata.setSheetName("expense");
 
         // 设置大表头

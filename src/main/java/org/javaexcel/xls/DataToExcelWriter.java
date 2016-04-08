@@ -6,12 +6,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.ss.util.RegionUtil;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.javaexcel.ExcelWriter;
 import org.javaexcel.model.ExcelMetaData;
 import org.javaexcel.model.ExcelTitle;
+import org.javaexcel.util.Const;
 import org.javaexcel.util.FileUtils;
 import org.javaexcel.util.JsonUtil;
 
@@ -43,7 +47,7 @@ public class DataToExcelWriter extends ExcelWriter {
         }
 
         try (FileOutputStream out = new FileOutputStream(fileName)) {
-            wb = new HSSFWorkbook();
+            initWorkbook(fileName);
             sheet = wb.createSheet(this.metedata.getSheetName());
 
             init();
@@ -58,6 +62,8 @@ public class DataToExcelWriter extends ExcelWriter {
             // 写数据
             writeData();
 
+            writeFooter();
+
             setAllRangeBorder();
 
             wb.write(out);
@@ -69,18 +75,41 @@ public class DataToExcelWriter extends ExcelWriter {
         return result;
     }
 
+    /**
+     * 获取 Workbook
+     */
+    public void initWorkbook(String fileName) {
+        if (fileName.toLowerCase().endsWith(Const.EXCEL_SUFFIX_XLS)) {
+            wb = new HSSFWorkbook();
+        } else {
+            // wb = new SXSSFWorkbook(100);
+            wb = new XSSFWorkbook();
+        }
+    }
+
     private void writeHeader() {
         if (this.metedata.isHasHeader() && null != this.metedata.getHeader()) {
             cellStyle = this.getStyle("headerStyle");
             row = sheet.createRow(rownum);
-            CellRangeAddress address = new CellRangeAddress(rownum, rownum, rownum, columnSize - 1);
+            CellRangeAddress address = new CellRangeAddress(rownum, rownum, 0, columnSize - 1);
             sheet.addMergedRegion(address);
             cellRanges.add(address);
             row.setHeightInPoints(metedata.getHeader().getRowHeight());
-            cell = row.createCell(0);
-            cell.setCellValue(metedata.getHeader().getHeaderName());
-            cell.setCellStyle(cellStyle);
+
+            CellUtil.createCell(row, rownum, metedata.getHeader().getHeaderName(), cellStyle);
             rownum++;
+        }
+    }
+
+    private void writeFooter() {
+        if (this.metedata.isHasFooter() && null != this.metedata.getFooter()) {
+            cellStyle = this.getStyle("footerStyle");
+            row = sheet.createRow(rownum);
+            CellRangeAddress address = new CellRangeAddress(rownum, rownum, 0, columnSize - 1);
+            sheet.addMergedRegion(address);
+            cellRanges.add(address);
+            row.setHeightInPoints(metedata.getFooter().getRowHeight());
+            CellUtil.createCell(row, 0, metedata.getFooter().getRemarks(), cellStyle);
         }
     }
 
@@ -89,7 +118,7 @@ public class DataToExcelWriter extends ExcelWriter {
      */
     private void setAllRangeBorder() {
         for (CellRangeAddress address : this.cellRanges) {
-            setBorder(address);
+            this.setBorder(address);
         }
     }
 
@@ -105,6 +134,7 @@ public class DataToExcelWriter extends ExcelWriter {
             for (ExcelTitle ex : titles) {
                 if (null != ex.getSubTitles() && ex.getSubTitles().size() >= 2) {
                     address = new CellRangeAddress(rownum, rownum, ex.getSubTitles().get(0).getIndex(), ex.getSubTitles().get(ex.getSubTitles().size() - 1).getIndex());
+
                     sheet.addMergedRegion(address);
                     cellRanges.add(address);
                     bigheaders.add(ex);
@@ -113,8 +143,8 @@ public class DataToExcelWriter extends ExcelWriter {
 
                 // 合并头两行的某一列
                 address = new CellRangeAddress(rownum, rownum + 1, ex.getIndex(), ex.getIndex());
-                cellRanges.add(address);
                 sheet.addMergedRegion(address);
+                cellRanges.add(address);
                 mergeTitles.add(ex);
             }
 
@@ -125,10 +155,7 @@ public class DataToExcelWriter extends ExcelWriter {
             twoRow.setHeightInPoints(DEFAULTROWHEIGHT);
             for (ExcelTitle ete : titles) {
                 if (null != ete.getSubTitles() && ete.getSubTitles().size() >= 2) {
-                    cell = oneRow.createCell(ete.getSubTitles().get(0).getIndex());
-                    cell.setCellValue(ete.getDisplayName());
-                    cell.setCellStyle(cellStyle);
-
+                    CellUtil.createCell(oneRow, ete.getSubTitles().get(0).getIndex(), ete.getDisplayName(), cellStyle);
                     for (ExcelTitle subTitle : ete.getSubTitles()) {
                         createCell(twoRow, subTitle);
                     }
@@ -140,10 +167,7 @@ public class DataToExcelWriter extends ExcelWriter {
             row = sheet.createRow(rownum++);
             row.setHeightInPoints(DEFAULTROWHEIGHT);
             for (ExcelTitle eh : this.metedata.getExcelTitle()) {
-                int index = eh.getIndex();
-                cell = row.createCell(index);
-                cell.setCellValue(eh.getName());
-                cell.setCellStyle(cellStyle);
+                CellUtil.createCell(row, eh.getIndex(), eh.getName(), cellStyle);
             }
         }
     }
@@ -154,9 +178,8 @@ public class DataToExcelWriter extends ExcelWriter {
         } else {
             sheet.setColumnWidth(ete.getIndex(), ete.getDisplayName().length() * 4 * 256);
         }
-        cell = row.createCell(ete.getIndex());
-        cell.setCellValue(ete.getDisplayName());
-        cell.setCellStyle(cellStyle);
+
+        CellUtil.createCell(row, ete.getIndex(), ete.getDisplayName(), cellStyle);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -180,10 +203,11 @@ public class DataToExcelWriter extends ExcelWriter {
                 row = sheet.createRow(rownum++);
                 row.setHeightInPoints(DEFAULTROWHEIGHT);
                 for (ExcelTitle eh : mergeTitles) {
-                    cellStyle = this.getStyle("cellstyle_" + eh.getIndex());
-                    cell = row.createCell(eh.getIndex());
-                    cell.setCellValue(dataMap.get(eh.getName()) + "");
-                    cell.setCellStyle(cellStyle);
+                    // cellStyle = this.getStyle("cellstyle_" + eh.getIndex());
+                    // CellUtil.createCell(row, eh.getIndex(),
+                    // dataMap.get(eh.getName()) + "", cellStyle);
+
+                    createCell(eh, dataMap.get(eh.getName()));
                 }
 
                 for (int i = 0; i < rowsize; i++) {
@@ -192,10 +216,12 @@ public class DataToExcelWriter extends ExcelWriter {
                         if (obj instanceof List) {
                             Map<String, Object> detailData = (Map<String, Object>) ((List) obj).get(i);
                             ele.getSubTitles().stream().forEach(exte -> {
-                                cellStyle = this.getStyle("cellstyle_" + exte.getIndex());
-                                cell = row.createCell(exte.getIndex());
-                                cell.setCellValue(detailData.get(exte.getName()) + "");
-                                cell.setCellStyle(cellStyle);
+                                // cellStyle = this.getStyle("cellstyle_" +
+                                // exte.getIndex());
+                                // CellUtil.createCell(row, exte.getIndex(),
+                                // detailData.get(exte.getName()) + "",
+                                // cellStyle);
+                                createCell(exte, detailData.get(exte.getName()));
                             });
                         }
                     }
@@ -214,11 +240,40 @@ public class DataToExcelWriter extends ExcelWriter {
         }
     }
 
+    private void createCell(ExcelTitle ete, Object obj) {
+        cellStyle = this.getStyle("cellstyle_" + ete.getIndex());
+        String result = "";
+        if (JsonUtil.isEmpty(obj)) {
+            if (!JsonUtil.isEmpty(ete.getFillChar())) {
+                result = ete.getFillChar();
+            }
+
+            CellUtil.createCell(row, ete.getIndex(), result, cellStyle);
+            return;
+        }
+
+        cell = row.createCell(ete.getIndex());
+        cell.setCellStyle(cellStyle);
+        switch (ete.getDataType()) {
+            case NUMBER:
+            case INT:
+            case MONEY:
+            case PERCENT:
+                cell.setCellValue(Double.valueOf(obj.toString()));
+                break;
+            default:
+                result = obj.toString();
+                cell.setCellValue(result);
+                break;
+        }
+
+        // CellUtil.createCell(row, ete.getIndex(), result, cellStyle);
+    }
+
     private void createAllCell(Row row, Map<String, Object> data) {
         allTitles.stream().forEach(eh -> {
-            Integer index = eh.getIndex();
-            cell = row.createCell(index);
-            cell.setCellValue(data.get(eh.getName()) + "");
+            cellStyle = this.getStyle("cellstyle_" + eh.getIndex());
+            CellUtil.createCell(row, eh.getIndex(), data.get(eh.getName()) + "", cellStyle);
         });
     }
 
@@ -233,9 +288,9 @@ public class DataToExcelWriter extends ExcelWriter {
     }
 
     public void setBorder(CellRangeAddress cellRangeAddress) {
-        RegionUtil.setBorderLeft(1, cellRangeAddress, sheet, wb);
-        RegionUtil.setBorderBottom(1, cellRangeAddress, sheet, wb);
-        RegionUtil.setBorderRight(1, cellRangeAddress, sheet, wb);
-        RegionUtil.setBorderTop(1, cellRangeAddress, sheet, wb);
+        RegionUtil.setBorderLeft(CellStyle.BORDER_THIN, cellRangeAddress, sheet, wb);
+        RegionUtil.setBorderBottom(CellStyle.BORDER_THIN, cellRangeAddress, sheet, wb);
+        RegionUtil.setBorderRight(CellStyle.BORDER_THIN, cellRangeAddress, sheet, wb);
+        RegionUtil.setBorderTop(CellStyle.BORDER_THIN, cellRangeAddress, sheet, wb);
     }
 }

@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -41,6 +41,7 @@ public abstract class ExcelWriter {
     protected Row row;
     protected Cell cell;
     protected ExcelMetaData metedata;
+    protected DataFormat datafmt;
 
     /**
      * 导出数据到EXCEL
@@ -136,12 +137,29 @@ public abstract class ExcelWriter {
                 cellStyle.setFont(font);
             }
             setBorder();
+            setDataFormat(excelTitle);
             stylesMap.put("cellstyle_" + excelTitle.getIndex(), cellStyle);
         }
     }
 
-    public String getFormat(int index) {
-        return BuiltinFormats.getBuiltinFormat(index);
+    private void setDataFormat(ExcelTitle ete) {
+        datafmt = wb.createDataFormat();
+        switch (ete.getDataType()) {
+            case NUMBER:
+                this.cellStyle.setDataFormat(datafmt.getFormat("###.00"));
+                break;
+            case INT:
+                this.cellStyle.setDataFormat(datafmt.getFormat("0"));
+                break;
+            case MONEY:
+                this.cellStyle.setDataFormat(datafmt.getFormat("#,##0.00"));
+                break;
+            case PERCENT:
+                this.cellStyle.setDataFormat(datafmt.getFormat("00.00%"));
+                break;
+            default:
+                break;
+        }
     }
 
     /**

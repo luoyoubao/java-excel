@@ -10,9 +10,6 @@ import java.util.List;
  * CreateTime  : 2016年3月14日
  */
 public class ExcelMetaData {
-    // 文件类型(支持xls和xlsx)
-    private String fileType = "xlsx";
-
     // Excel文件名称
     private String fileName = "service";
 
@@ -35,14 +32,6 @@ public class ExcelMetaData {
 
     // 备注
     private ExcelFooter footer;
-
-    public String getFileType() {
-        return fileType;
-    }
-
-    public void setFileType(String fileType) {
-        this.fileType = fileType;
-    }
 
     public String getFileName() {
         return fileName;

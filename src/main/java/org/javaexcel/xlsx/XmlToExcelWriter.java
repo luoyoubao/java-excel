@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +37,6 @@ public class XmlToExcelWriter extends ExcelWriter {
     private List<CellMerge> cellMerges = new ArrayList<CellMerge>();
     private SpreadSheetWriter sw;
     private CellMerge cellMerge;
-    private DecimalFormat fmt;
 
     /**
      * 导出文件
@@ -230,7 +228,7 @@ public class XmlToExcelWriter extends ExcelWriter {
         }
     }
 
-    private void createCell(ExcelTitle ete, Object obj, CellStyle style) throws IOException {
+    private void createCell(ExcelTitle ete, Object obj, CellStyle style) throws IOException, ParseException {
         String result = "";
         if (JsonUtil.isEmpty(obj)) {
             if (!JsonUtil.isEmpty(ete.getFillChar())) {
@@ -239,32 +237,11 @@ public class XmlToExcelWriter extends ExcelWriter {
             sw.createCell(ete.getIndex(), result, style.getIndex());
             return;
         }
-
-        switch (ete.getDataType()) {
-            case NUMBER:
-                fmt = new DecimalFormat("###.00");
-                result = fmt.format(obj);
-                break;
-            case INT:
-                fmt = new DecimalFormat("0");
-                result = fmt.format(obj);
-                break;
-            case MONEY:
-                fmt = new DecimalFormat("####.00");
-                result = fmt.format(obj);
-                break;
-            case PERCENT:
-                fmt = new DecimalFormat("00.00%");
-                result = fmt.format(obj);
-                break;
-            default:
-                result = obj.toString();
-                break;
-        }
+        result = obj.toString();
         sw.createCell(ete.getIndex(), result, style.getIndex());
     }
 
-    private void writeToRow(Map<String, Object> dataMap) throws IOException {
+    private void writeToRow(Map<String, Object> dataMap) throws IOException, ParseException {
         sw.insertRowWithHeight(rownum++, columnSize, DEFAULTROWHEIGHT);
         for (ExcelTitle eh : this.allTitles) {
             cellStyle = this.getStyle("cellstyle_" + eh.getIndex());

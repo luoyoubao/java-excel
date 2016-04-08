@@ -171,7 +171,7 @@ public class SpreadSheetWriter {
         }
         _out.write(">");
         if (null != value) {
-            _out.write("<is><t>" + encoderXML(value) + "</t></is>");
+            _out.write("<is><t>" + value + "</t></is>");
         } else {
             _out.write("<is><t></t></is>");
         }

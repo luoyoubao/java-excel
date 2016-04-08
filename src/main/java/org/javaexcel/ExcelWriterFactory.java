@@ -12,9 +12,8 @@ import org.javaexcel.xlsx.XmlToExcelWriter;
  * CreateTime  : 2016年4月7日
  */
 public class ExcelWriterFactory {
-    public static ExcelWriter getWriter(String type) {
-        ExcelType excelType = ExcelType.valueOf(type.toUpperCase());
-        switch (excelType) {
+    public static ExcelWriter getWriter(ExcelType type) {
+        switch (type) {
             case XLS:
                 return new DataToExcelWriter();
             case XLSX:

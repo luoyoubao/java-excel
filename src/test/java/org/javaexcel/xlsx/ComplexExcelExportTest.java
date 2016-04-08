@@ -6,14 +6,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.javaexcel.ExcelWriter;
+import org.javaexcel.ExcelWriterFactory;
 import org.javaexcel.model.CellType;
 import org.javaexcel.model.ExcelCellStyle;
 import org.javaexcel.model.ExcelColor;
+import org.javaexcel.model.ExcelFooter;
 import org.javaexcel.model.ExcelHeader;
 import org.javaexcel.model.ExcelMetaData;
 import org.javaexcel.model.ExcelTitle;
+import org.javaexcel.model.ExcelType;
 import org.javaexcel.util.JsonUtil;
-import org.javaexcel.xls.DataToExcelWriter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,19 +28,18 @@ import org.junit.Test;
  * CreateTime  : 2016年3月28日
  */
 public class ComplexExcelExportTest {
-    private static final int ROWS = 10;
+    private static final int ROWS = 100;
     private ExcelMetaData metadata;
     private List<Object> datas;
 
     @Test
-    public void test() {
+    public void test_XLS() {
         try {
             long begTime = System.currentTimeMillis();
-            boolean result = new DataToExcelWriter().process(this.metadata, this.datas,
-                    "/Users/Robert/Desktop/QA_test/expense.xls");
-
-            System.out.println("Total:" + (System.currentTimeMillis() - begTime) + "ms");
-            System.out.println("running>>>" + result);
+            ExcelWriter writer = ExcelWriterFactory.getWriter(ExcelType.XLS);
+            writer.process(this.metadata, this.datas,
+                    "/Users/Robert/Desktop/QA_test/expense_test.xls");
+            System.out.println("XLS Total:" + (System.currentTimeMillis() - begTime) + "ms");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -51,7 +53,6 @@ public class ComplexExcelExportTest {
         int rownum = 0;
         metadata = new ExcelMetaData();
         metadata.setFileName("test");
-        metadata.setFileType("xls");
         metadata.setSheetName("test data");
         metadata.setHasSubTitle(true);
 
@@ -66,6 +67,16 @@ public class ComplexExcelExportTest {
         style.setSize((short) 40);
         header.setCellStyle(style);
         this.metadata.setHeader(header);
+
+        this.metadata.setHasFooter(true);
+        ExcelFooter footer = new ExcelFooter();
+        footer.setRemarks("说明:尾部");
+        ExcelCellStyle sy = new ExcelCellStyle();
+        sy.setAlign(CellStyle.ALIGN_LEFT);
+        sy.setVerticalAlign(CellStyle.VERTICAL_CENTER);
+        sy.setSize((short) 10);
+        footer.setCellStyle(sy);
+        this.metadata.setFooter(footer);
 
         // 设置表头
         List<ExcelTitle> titles = new ArrayList<ExcelTitle>();
@@ -173,9 +184,10 @@ public class ComplexExcelExportTest {
 
         this.metadata.setExcelTitle(titles);
 
-        long btime = System.currentTimeMillis();
+        // long btime = System.currentTimeMillis();
         constructdata();
-        System.out.println("init data:" + (System.currentTimeMillis() - btime) + "ms");
+        // System.out.println("init data:" + (System.currentTimeMillis() -
+        // btime) + "ms");
         // System.out.println(JsonUtil.beanToString(req));
     }
 

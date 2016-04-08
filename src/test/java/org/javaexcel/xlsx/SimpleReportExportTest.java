@@ -13,6 +13,7 @@ import org.javaexcel.model.ExcelColor;
 import org.javaexcel.model.ExcelHeader;
 import org.javaexcel.model.ExcelMetaData;
 import org.javaexcel.model.ExcelTitle;
+import org.javaexcel.model.ExcelType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,7 +33,7 @@ public class SimpleReportExportTest {
     public void test() {
         long begTime = System.currentTimeMillis();
         try {
-            ExcelWriter writer = ExcelWriterFactory.getWriter(metadata.getFileType());
+            ExcelWriter writer = ExcelWriterFactory.getWriter(ExcelType.XLSX);
             writer.process(metadata, datas, "/Users/Robert/Desktop/QA_test/user.xlsx");
         } catch (Exception e) {
             e.printStackTrace();
@@ -45,7 +46,6 @@ public class SimpleReportExportTest {
     public void setUp() throws Exception {
         metadata = new ExcelMetaData();
         metadata.setFileName("SimpleReport");
-        metadata.setFileType("xlsx");
         metadata.setSheetName("SimpleReport");
 
         // 设置大表头

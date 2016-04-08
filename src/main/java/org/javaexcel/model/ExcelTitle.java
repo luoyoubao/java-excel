@@ -28,7 +28,7 @@ public class ExcelTitle {
     // 列是否支持合并(行合并)
     private boolean isMerge = false;
 
-    private ExcelCellStyle cellStyle;
+    private ExcelCellStyle cellStyle = new ExcelCellStyle();
 
     // 子标题列表
     private List<ExcelTitle> subTitles = new ArrayList<ExcelTitle>();

@@ -12,7 +12,7 @@ public class ExcelHeader {
     private String headerName;
 
     // 样式
-    private ExcelCellStyle cellStyle = new ExcelCellStyle();
+    private ExcelCellStyle cellStyle;
 
     private float rowHeight = 50;
 

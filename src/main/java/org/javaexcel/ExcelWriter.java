@@ -75,71 +75,47 @@ public abstract class ExcelWriter {
     }
 
     protected void initStyle() {
-        ExcelCellStyle style = null;
+        // 设置表头样式
         ExcelHeader header = metedata.getHeader();
         if (metedata.isHasHeader() && null != header) {
-            cellStyle = wb.createCellStyle();
-            style = header.getCellStyle();
-            if (null != style) {
-                cellStyle.setAlignment(style.getAlign());
-                cellStyle.setVerticalAlignment(style.getVerticalAlign());
-
-                font = wb.createFont();
-                font.setFontHeightInPoints(style.getSize());
-                font.setColor(style.getColor());
-                cellStyle.setFont(font);
-                cellStyle.setFillForegroundColor(style.getBackgroundColor());
-                cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-            }
-            setBorder();
+            setCellStyle(header.getCellStyle());
             this.stylesMap.put("headerStyle", cellStyle);
         }
 
+        // 设置footer样式
         ExcelFooter footer = metedata.getFooter();
         if (metedata.isHasFooter() && null != footer) {
-            cellStyle = wb.createCellStyle();
-            style = footer.getCellStyle();
-            if (null != style) {
-                cellStyle.setAlignment(style.getAlign());
-                cellStyle.setVerticalAlignment(style.getVerticalAlign());
-
-                font = wb.createFont();
-                font.setFontHeightInPoints(style.getSize());
-                font.setColor(style.getColor());
-                font.setItalic(style.isItalic());
-                cellStyle.setFont(font);
-            }
-            setBorder();
+            setCellStyle(footer.getCellStyle());
             this.stylesMap.put("footerStyle", cellStyle);
         }
 
-        cellStyle = wb.createCellStyle();
-        cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
-        cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
-        font = wb.createFont();
-        font.setFontHeightInPoints((short) 12);
-        font.setBoldweight(Font.BOLDWEIGHT_NORMAL);
-        cellStyle.setFont(font);
-        setBorder();
+        // 设置标题样式
+        this.setCellStyle(metedata.getTitleStyle());
         stylesMap.put("titleStyle", cellStyle);
 
+        // 设置数据单元格样式
         for (ExcelTitle excelTitle : allTitles) {
-            cellStyle = wb.createCellStyle();
-            cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
-            ExcelCellStyle estyle = excelTitle.getCellStyle();
-            if (null != estyle) {
-                cellStyle.setAlignment(estyle.getAlign());
-                cellStyle.setVerticalAlignment(estyle.getVerticalAlign());
-
-                font = wb.createFont();
-                font.setFontHeightInPoints(estyle.getSize());
-                font.setColor(estyle.getColor());
-                cellStyle.setFont(font);
-            }
-            setBorder();
+            this.setCellStyle(excelTitle.getCellStyle());
             setDataFormat(excelTitle);
             stylesMap.put("cellstyle_" + excelTitle.getIndex(), cellStyle);
         }
+    }
+
+    private void setCellStyle(ExcelCellStyle style) {
+        cellStyle = wb.createCellStyle();
+        cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+        if (null != style) {
+            cellStyle.setAlignment(style.getAlign());
+            cellStyle.setVerticalAlignment(style.getVerticalAlign());
+            font = wb.createFont();
+            font.setFontHeightInPoints(style.getSize());
+            font.setColor(style.getColor());
+            font.setItalic(style.isItalic());
+            cellStyle.setFont(font);
+            cellStyle.setFillForegroundColor(style.getBackgroundColor());
+            cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        }
+        setBorder();
     }
 
     private void setDataFormat(ExcelTitle ete) {

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.javaexcel.ExcelWriter;
@@ -30,7 +31,7 @@ import org.junit.Test;
  * CreateTime  : 2016年4月2日
  */
 public class XmlToExcelWriterTest {
-    private static final int ROWS = 100;
+    private static final int ROWS = 10;
     private ExcelMetaData metadata;
     private List<Object> datas;
 
@@ -62,12 +63,19 @@ public class XmlToExcelWriterTest {
         header.setHeaderName("报销单");
         header.setRowHeight(40);
         ExcelCellStyle hs = new ExcelCellStyle();
-        hs.setAlign(XSSFCellStyle.ALIGN_CENTER);
-        hs.setVerticalAlign(XSSFCellStyle.ALIGN_CENTER);
+        hs.setAlign(CellStyle.ALIGN_CENTER);
+        hs.setVerticalAlign(CellStyle.ALIGN_CENTER);
         hs.setSize((short) 42);
         hs.setColor(ExcelColor.RED);
         header.setCellStyle(hs);
         this.metadata.setHeader(header);
+
+        // 设置标题格式
+        ExcelCellStyle titleStyle = new ExcelCellStyle();
+        titleStyle.setAlign(CellStyle.ALIGN_CENTER);
+        titleStyle.setSize((short) 12);
+        titleStyle.setItalic(true);
+        this.metadata.setTitleStyle(titleStyle);
 
         this.metadata.setHasFooter(true);
         ExcelFooter footer = new ExcelFooter();

@@ -24,6 +24,8 @@ public class ExcelMetaData {
 
     private boolean hasSubTitle = false;
 
+    private ExcelCellStyle titleStyle;
+
     // 列标题
     private List<ExcelTitle> excelTitle;
 
@@ -32,6 +34,14 @@ public class ExcelMetaData {
 
     // 备注
     private ExcelFooter footer;
+
+    public ExcelCellStyle getTitleStyle() {
+        return titleStyle;
+    }
+
+    public void setTitleStyle(ExcelCellStyle titleStyle) {
+        this.titleStyle = titleStyle;
+    }
 
     public String getFileName() {
         return fileName;

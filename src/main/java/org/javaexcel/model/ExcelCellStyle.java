@@ -23,7 +23,7 @@ public class ExcelCellStyle {
     private short color = ExcelColor.DEFAULT_COLOR;
 
     // 单元格背景色
-    private short backgroundColor = ExcelColor.GREY_25_PERCENT;
+    private short backgroundColor = ExcelColor.WHITE;
 
     // 斜体
     private boolean isItalic = false;

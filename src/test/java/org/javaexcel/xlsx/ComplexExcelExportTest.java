@@ -37,9 +37,9 @@ public class ComplexExcelExportTest {
     public void test_XLS() {
         try {
             long begTime = System.currentTimeMillis();
-            ExcelWriter writer = ExcelWriterFactory.getWriter(ExcelType.XLS);
+            ExcelWriter writer = ExcelWriterFactory.getWriter(ExcelType.XLSX);
             writer.process(this.metadata, this.datas,
-                    "/Users/Robert/Desktop/QA_test/expense_test.xls");
+                    "/Users/Robert/Desktop/QA_test/expense_test.xlsx");
             System.out.println("XLS Total:" + (System.currentTimeMillis() - begTime) + "ms");
         } catch (Exception e) {
             e.printStackTrace();

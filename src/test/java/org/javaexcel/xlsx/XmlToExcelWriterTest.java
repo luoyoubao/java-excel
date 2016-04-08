@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.javaexcel.ExcelWriter;
 import org.javaexcel.ExcelWriterFactory;
 import org.javaexcel.model.CellType;
@@ -67,6 +66,7 @@ public class XmlToExcelWriterTest {
         hs.setVerticalAlign(CellStyle.ALIGN_CENTER);
         hs.setSize((short) 42);
         hs.setColor(ExcelColor.RED);
+        hs.setBackgroundColor(ExcelColor.YELLOW);
         header.setCellStyle(hs);
         this.metadata.setHeader(header);
 
@@ -75,6 +75,7 @@ public class XmlToExcelWriterTest {
         titleStyle.setAlign(CellStyle.ALIGN_CENTER);
         titleStyle.setSize((short) 12);
         titleStyle.setItalic(true);
+        titleStyle.setBackgroundColor(ExcelColor.GREY_25_PERCENT);
         this.metadata.setTitleStyle(titleStyle);
 
         this.metadata.setHasFooter(true);
@@ -89,6 +90,123 @@ public class XmlToExcelWriterTest {
 
         structureMetaData();
         constructdata();
+    }
+
+    private void structureMetaData() {
+        int rownum = 0;
+
+        // 设置表头
+        List<ExcelTitle> titles = new ArrayList<ExcelTitle>();
+        ExcelTitle t1 = new ExcelTitle();
+        t1.setIndex(rownum++);
+        t1.setName("billType");
+        t1.setDisplayName("单据类型");
+        t1.setDataType(CellType.TEXT);
+        t1.setMerge(true);
+        t1.setColumnWidth(12);
+        titles.add(t1);
+
+        ExcelTitle t2 = new ExcelTitle();
+        t2.setIndex(rownum++);
+        t2.setName("billName");
+        t2.setDisplayName("单据名称");
+        t2.setDataType(CellType.TEXT);
+        t2.setMerge(true);
+        t2.setColumnWidth(13);
+        titles.add(t2);
+
+        ExcelTitle t3 = new ExcelTitle();
+        t3.setIndex(rownum++);
+        t3.setName("createUserId");
+        t3.setDisplayName("提交人");
+        t3.setDataType(CellType.TEXT);
+        t3.setMerge(true);
+        titles.add(t3);
+
+        ExcelTitle t4 = new ExcelTitle();
+        t4.setIndex(3);
+        t4.setName("owner");
+        t4.setDisplayName("费用归属");
+        t4.setDataType(CellType.TEXT);
+        t4.setMerge(true);
+        titles.add(t4);
+
+        ExcelTitle t5 = new ExcelTitle();
+        t5.setIndex(4);
+        t5.setName("submitDate");
+        t5.setDisplayName("审批提交日期");
+        t5.setDataType(CellType.DATE);
+        t5.setMerge(true);
+        t5.setColumnWidth(20);
+        titles.add(t5);
+
+        ExcelTitle t6 = new ExcelTitle();
+        t6.setIndex(5);
+        t6.setName("status");
+        t6.setDisplayName("审批状态");
+        t6.setDataType(CellType.TEXT);
+        t6.setMerge(true);
+        t6.setColumnWidth(12);
+        titles.add(t6);
+
+        ExcelTitle t7 = new ExcelTitle();
+        t7.setName("costDetail");
+        t7.setDisplayName("费用详情");
+        t7.setDataType(CellType.LIST);
+        titles.add(t7);
+
+        List<ExcelTitle> subTitles = new ArrayList<ExcelTitle>();
+        // 初始化子项
+        ExcelTitle t8 = new ExcelTitle();
+        t8.setIndex(6);
+        t8.setName("costtype");
+        t8.setDisplayName("费用类型");
+        t8.setDataType(CellType.TEXT);
+        subTitles.add(t8);
+
+        ExcelTitle t9 = new ExcelTitle();
+        t9.setIndex(7);
+        t9.setName("costCreateTime");
+        t9.setDisplayName("费用发生时间");
+        t9.setDataType(CellType.DATE);
+        subTitles.add(t9);
+
+        ExcelTitle t10 = new ExcelTitle();
+        t10.setIndex(8);
+        t10.setName("costDesc");
+        t10.setDisplayName("费用描述");
+        t10.setDataType(CellType.TEXT);
+        subTitles.add(t10);
+
+        ExcelTitle t11 = new ExcelTitle();
+        t11.setIndex(9);
+        t11.setName("costMoney");
+        t11.setDisplayName("费用金额");
+        t11.setDataType(CellType.MONEY);
+        subTitles.add(t11);
+
+        t7.setSubTitles(subTitles);
+
+        ExcelTitle t12 = new ExcelTitle();
+        t12.setIndex(10);
+        t12.setName("expenseMoney");
+        t12.setDisplayName("报销金额");
+        t12.setDataType(CellType.MONEY);
+        t12.setMerge(true);
+        titles.add(t12);
+
+        ExcelTitle t13 = new ExcelTitle();
+        t13.setIndex(11);
+        t13.setName("loanMoney");
+        t13.setDisplayName("借款金额");
+        t13.setDataType(CellType.MONEY);
+        t13.setMerge(true);
+        ExcelCellStyle s13 = new ExcelCellStyle();
+        s13.setAlign(CellStyle.ALIGN_RIGHT);
+        t13.setCellStyle(s13);
+        titles.add(t13);
+
+        this.metadata.setExcelTitle(titles);
     }
 
     @SuppressWarnings("unchecked")
@@ -112,131 +230,6 @@ public class XmlToExcelWriterTest {
             Map<String, Object> em = JsonUtil.stringToBean(es, Map.class);
             datas.add(em);
         }
-    }
-
-    /**
-     * 
-     */
-    private void structureMetaData() {
-        int rownum = 0;
-        // 设置表头
-        List<ExcelTitle> titles = new ArrayList<ExcelTitle>();
-        ExcelTitle t1 = new ExcelTitle();
-        t1.setIndex(rownum++);
-        t1.setName("billType");
-        t1.setDisplayName("单据类型");
-        t1.setDataType(CellType.TEXT);
-        t1.setMerge(true);
-        titles.add(t1);
-
-        ExcelTitle t2 = new ExcelTitle();
-        t1.setIndex(rownum++);
-        t2.setName("billName");
-        t2.setDisplayName("单据名称");
-        t2.setDataType(CellType.TEXT);
-        t2.setMerge(true);
-        titles.add(t2);
-
-        ExcelTitle t3 = new ExcelTitle();
-        t1.setIndex(rownum++);
-        t3.setName("createUserId");
-        t3.setDisplayName("提交人");
-        t3.setDataType(CellType.TEXT);
-        t3.setMerge(true);
-        titles.add(t3);
-
-        ExcelTitle t4 = new ExcelTitle();
-        t1.setIndex(rownum++);
-        t4.setName("owner");
-        t4.setDisplayName("费用归属");
-        t4.setDataType(CellType.TEXT);
-        t4.setMerge(true);
-        titles.add(t4);
-
-        ExcelTitle t5 = new ExcelTitle();
-        t1.setIndex(rownum++);
-        t5.setName("submitDate");
-        t5.setDisplayName("审批提交日期");
-        t5.setDataType(CellType.DATE);
-        t5.setMerge(true);
-        t5.setColumnWidth(25);
-        ExcelCellStyle c5 = new ExcelCellStyle();
-        c5.setAlign(XSSFCellStyle.ALIGN_RIGHT);
-        c5.setVerticalAlign(XSSFCellStyle.VERTICAL_CENTER);
-        t5.setCellStyle(c5);
-        titles.add(t5);
-
-        ExcelTitle t6 = new ExcelTitle();
-        t1.setIndex(rownum++);
-        t6.setName("status");
-        t6.setDisplayName("审批状态");
-        t6.setDataType(CellType.TEXT);
-        t6.setMerge(true);
-        titles.add(t6);
-
-        ExcelTitle t7 = new ExcelTitle();
-        t7.setName("costDetail");
-        t7.setDisplayName("费用详情");
-        t7.setDataType(CellType.LIST);
-        titles.add(t7);
-
-        List<ExcelTitle> subTitles = new ArrayList<ExcelTitle>();
-        // 初始化子项
-        ExcelTitle t8 = new ExcelTitle();
-        t1.setIndex(rownum++);
-        t8.setName("costtype");
-        t8.setDisplayName("费用类型");
-        t8.setDataType(CellType.TEXT);
-        subTitles.add(t8);
-
-        ExcelTitle t9 = new ExcelTitle();
-        t1.setIndex(rownum++);
-        t9.setName("costCreateTime");
-        t9.setDisplayName("费用发生时间");
-        t9.setDataType(CellType.DATE);
-        subTitles.add(t9);
-
-        ExcelTitle t10 = new ExcelTitle();
-        t1.setIndex(rownum++);
-        t10.setName("costDesc");
-        t10.setDisplayName("费用描述");
-        t10.setDataType(CellType.TEXT);
-        subTitles.add(t10);
-
-        ExcelTitle t11 = new ExcelTitle();
-        t1.setIndex(rownum++);
-        t11.setName("costMoney");
-        t11.setDisplayName("费用金额");
-        t11.setDataType(CellType.MONEY);
-        subTitles.add(t11);
-
-        t7.setSubTitles(subTitles);
-
-        ExcelTitle t12 = new ExcelTitle();
-        t1.setIndex(rownum++);
-        t12.setName("expenseMoney");
-        t12.setDisplayName("报销金额");
-        t12.setDataType(CellType.MONEY);
-        t12.setMerge(true);
-        ExcelCellStyle c12 = new ExcelCellStyle();
-        c12.setAlign(XSSFCellStyle.ALIGN_RIGHT);
-        c12.setSize((short) 14);
-        c12.setColor(XSSFFont.COLOR_RED);
-        t12.setCellStyle(c12);
-        titles.add(t12);
-
-        ExcelTitle t13 = new ExcelTitle();
-        t1.setIndex(rownum++);
-        t13.setName("loanMoney");
-        t13.setDisplayName("借款金额");
-        t13.setDataType(CellType.MONEY);
-        t13.setMerge(true);
-        titles.add(t13);
-        ExcelCellStyle c13 = new ExcelCellStyle();
-        c13.setAlign(XSSFCellStyle.ALIGN_RIGHT);
-        t13.setCellStyle(c13);
-
-        metadata.setExcelTitle(titles);
     }
 
     class Expense {
